@@ -116,6 +116,7 @@ def run(db, http: Http | None = None, limit_pages: int | None = None, site: str 
             specs = _specs(p.get("body_html") or "")
             specs["product_type"] = ptype
             specs["vendor"] = p.get("vendor")
+            specs["tags"] = tags[:300]     # чтобы `hmb reslot` считал витрину теми же полями, что импорт
             lot = db.scalar(select(Lot).where(Lot.source_id == site, Lot.external_id == ext))
             if lot is None:
                 lot = Lot(source_id=site, external_id=ext, direction="offer", kind="catalog",
@@ -129,6 +130,8 @@ def run(db, http: Http | None = None, limit_pages: int | None = None, site: str 
             lot.source_url = f"{base}/products/{p['handle']}"
             lot.specs = specs
             lot.photos_count = len(p.get("images") or [])
+            imgs = p.get("images") or []
+            lot.image_url = (imgs[0].get("src") or "")[:800] if imgs and isinstance(imgs[0], dict) else None
             lot.maker = p.get("vendor")
             lot.posted_at = datetime.fromisoformat(p["published_at"]) if p.get("published_at") else None
             lot.status = "active" if any(v.get("available") for v in variants) else "stale"

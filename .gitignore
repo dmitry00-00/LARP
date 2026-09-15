@@ -16,3 +16,6 @@ analysis/mutations/
 # секреты
 .env*
 *.session
+
+# журнал массовых правок ядра — данные, не код
+kernel/analysis/mutations/

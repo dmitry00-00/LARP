@@ -39,6 +39,16 @@ def cmd_export(_a):
         print(json.dumps(write(s), ensure_ascii=False, indent=1))
 
 
+def cmd_reslot(a):
+    """Пересчёт слотов по сохранённым полям — «каждый посев — новый замер»."""
+    dbm.init_db()
+    from hmb.slots import reslot, seed_slots
+    with dbm.session() as s:
+        seeded = seed_slots(s); s.commit()
+        res = reslot(s, a.source)
+    print(json.dumps({"seed": seeded, **res}, ensure_ascii=False, indent=1))
+
+
 def cmd_status(_a):
     dbm.init_db()
     from sqlalchemy import func, select
@@ -66,6 +76,7 @@ def main(argv=None):
     pi = sub.add_parser("import"); pi.add_argument("source"); pi.add_argument("--limit-pages", type=int); pi.set_defaults(fn=cmd_import)
     pc = sub.add_parser("classify"); pc.add_argument("--limit", type=int, default=5000); pc.set_defaults(fn=cmd_classify)
     sub.add_parser("export").set_defaults(fn=cmd_export)
+    pr = sub.add_parser("reslot"); pr.add_argument("--source"); pr.set_defaults(fn=cmd_reslot)
     sub.add_parser("status").set_defaults(fn=cmd_status)
     a = p.parse_args(argv)
     return a.fn(a)

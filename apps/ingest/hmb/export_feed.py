@@ -4,8 +4,9 @@
 makers · sources · lots. Здесь `meta.synthetic=false`, `lots` — из таблицы,
 `slots` — из словаря (с алиасами: страница ищет по ним). Архетипы — пока из
 прежнего фида (ИСБ, 8 штук): своих под ЛАРП ещё нет, и это честно
-помечено в `meta.archetypesNote`. Поле `photos` — число, не URL: чужие фото
-не републикуем.
+помечено в `meta.archetypesNote`. Поле `photos` — число; `image` — прямая ссылка
+на картинку в CDN магазина только у витрин (решение владельца 15.09): копии не
+храним, фото частных объявлений не републикуем.
 """
 from __future__ import annotations
 
@@ -23,6 +24,46 @@ from kernel.db.fx import get_usd_per
 
 def _country_of(src: Source) -> str:
     return src.country or "—"
+
+
+RU_SHARE = 0.6   # решение владельца 15.09: RU и DE/NL одновременно, ориентир — RU
+
+
+def _select_lots(db: Session, max_lots: int) -> list[Lot]:
+    """Что попадает в фид при потолке страницы (~5 000 строк, site/README).
+
+    Объявления — все и первыми (их мало, они и есть рынок). Витрины —
+    по квоте: RU-магазинам RU_SHARE остатка, остальным — остальное; внутри
+    группы источники чередуются по кругу, чтобы ни одна витрина не вытесняла
+    другие. До 15.09 сортировка шла по `posted_at`, и 4 500 RU-карточек без
+    даты публикации (donjon, wargearshop) в фид не попадали вовсе.
+    """
+    ads = list(db.scalars(select(Lot).where(Lot.status == "active", Lot.kind == "ad")
+                          .order_by(Lot.posted_at.desc().nullslast(), Lot.id.desc())))
+    by_src: dict[str, list[Lot]] = {}
+    for l in db.scalars(select(Lot).where(Lot.status == "active", Lot.kind == "catalog").order_by(Lot.id)):
+        by_src.setdefault(l.source_id, []).append(l)
+    room = max(0, max_lots - len(ads))
+    ru = [v for k, v in by_src.items() if (v[0].country or "") == "RU"]
+    other = [v for k, v in by_src.items() if (v[0].country or "") != "RU"]
+
+    def round_robin(groups: list[list[Lot]], limit: int) -> list[Lot]:
+        out: list[Lot] = []
+        idx = [0] * len(groups)
+        while len(out) < limit:
+            progressed = False
+            for gi, g in enumerate(groups):
+                if idx[gi] < len(g) and len(out) < limit:
+                    out.append(g[idx[gi]]); idx[gi] += 1; progressed = True
+            if not progressed:
+                break
+        return out
+
+    ru_lots = round_robin(ru, int(room * RU_SHARE)) if other else round_robin(ru, room)
+    other_lots = round_robin(other, room - len(ru_lots))
+    if len(ru_lots) + len(other_lots) < room:      # у одной группы не хватило — добираем другой
+        ru_lots = round_robin(ru, room - len(other_lots))
+    return ads + ru_lots + other_lots
 
 
 def build(db: Session, max_lots: int = 5000) -> dict:
@@ -44,13 +85,8 @@ def build(db: Session, max_lots: int = 5000) -> dict:
                       "aliases": [a.alias for a in s.aliases]})
     sources = {src.id: src for src in db.scalars(select(Source))}
     lots = []
-    # Объявления — всегда впереди витрин: страница рендерит всё разом и выше
-    # ~5 000 строк не живёт (site/README «за кадром»), а витрин уже 9 000+.
-    from sqlalchemy import case
-    q = (select(Lot).where(Lot.status == "active")
-         .order_by(case((Lot.kind == "ad", 0), else_=1), Lot.posted_at.desc().nullslast(), Lot.id.desc()).limit(max_lots))
     now = datetime.now(UTC)
-    for l in db.scalars(q):
+    for l in _select_lots(db, max_lots):
         src = sources.get(l.source_id)
         posted = l.posted_at
         if posted is not None and posted.tzinfo is None:
@@ -62,8 +98,10 @@ def build(db: Session, max_lots: int = 5000) -> dict:
             "period": None, "yearFrom": None, "yearTo": None, "region": None,
             "condition": l.condition, "price": l.price_rub if l.price_rub is not None else l.price, "priceNative": l.price,
             "currency": "RUB" if l.price_rub is not None else l.currency, "currencyNative": l.currency,
-            "city": l.city, "country": l.country, "measures": {k: v for k, v in (l.specs or {}).items() if k in ("length_cm", "weight_g", "chest_cm", "head_cm")},
+            "city": l.city, "country": l.country, "measures": {k: v for k, v in (l.specs or {}).items() if k in ("length_cm", "blade_cm", "weight_g", "hardness_shore_a", "chest_cm", "head_cm")},
             "steelMm": None, "weightG": (l.specs or {}).get("weight_g"), "photos": l.photos_count,
+            # картинка — прямая ссылка на CDN магазина (решение владельца 15.09), только у витрин
+            "image": l.image_url if l.kind == "catalog" else None,
             "maker": l.maker, "source": l.source_id, "sourceRef": (src.title if src else l.source_id), "sourceUrl": l.source_url,
             "postedAt": posted.date().isoformat() if posted else None, "age": age,
             "provenance": l.provenance, "status": l.status, "slotConfidence": l.slot_confidence,

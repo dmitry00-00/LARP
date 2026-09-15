@@ -139,6 +139,10 @@ class Lot(TimestampMixin, Base):
     # core, material, brand, chest_cm, head_cm … (что есть — то есть).
     specs: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     photos_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # Решение владельца 15.09: картинки витрин показываем ПО ПРЯМОЙ ССЫЛКЕ на CDN
+    # магазина (копии у нас нет; пропал товар — пропала картинка). Заполняется
+    # только у kind=catalog; фото частных объявлений (kind=ad) не републикуем.
+    image_url: Mapped[str | None] = mapped_column(String(800))
     maker: Mapped[str | None] = mapped_column(String(120))
     status: Mapped[str] = mapped_column(String(12), default="active", nullable=False, index=True)   # active · stale · sold · dead
     provenance: Mapped[str] = mapped_column(String(32), default="import", nullable=False)

@@ -35,9 +35,31 @@ def engine():
     return _engine
 
 
+# Первая правка схемы после create_all (15.09.2026, image_url у lots). Alembic
+# ещё не заведён; до него — этот реестр добавленных колонок: create_all
+# новые колонки в существующую таблицу НЕ добавляет, и без этого списка
+# свежая модель падает на старой базе с «no such column».
+_ADDED_COLUMNS: list[tuple[str, str, str]] = [
+    ("lots", "image_url", "VARCHAR(800)"),
+]
+
+
+def _ensure_columns(eng) -> list[str]:
+    from sqlalchemy import inspect, text
+    added: list[str] = []
+    insp = inspect(eng)
+    with eng.begin() as conn:
+        for table, col, ddl in _ADDED_COLUMNS:
+            if table in insp.get_table_names() and col not in {c["name"] for c in insp.get_columns(table)}:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {ddl}"))
+                added.append(f"{table}.{col}")
+    return added
+
+
 def init_db() -> None:
-    """Пока без Alembic: create_all. Долг записан в config.py."""
+    """Пока без Alembic: create_all + реестр добавленных колонок. Долг записан в config.py."""
     Base.metadata.create_all(engine())
+    _ensure_columns(engine())
 
 
 @contextmanager

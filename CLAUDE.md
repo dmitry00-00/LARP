@@ -5,7 +5,10 @@
 > Здесь — **как устроено**. Правила «как работать» — `docs/AGENT_RULES.md`
 > (с 15.09.2026, копия recruit с баннером). Сверх них действует правило
 > этого проекта: **не коммитить, не публиковать, не писать секреты, не
-> запускать массовые правки без спроса владельца**. Быстрый вход — скилл
+> запускать массовые правки без спроса владельца**. Репозиторий заведён
+> 15.09.2026 по слову владельца («лучше сразу поставить гит»), первый коммит
+> `9f03e65`, запушен в `github.com/dmitry00-00/LARP` (SSH, ключ машины); каждый
+> следующий коммит — по-прежнему со спросом, пока владелец не снимет запрет явно. Быстрый вход — скилл
 > `/continue` (`.claude/skills/continue/`).
 >
 > Числа в этом файле помечены датой замера и источником. Правило дома:
@@ -88,7 +91,7 @@ Telegram / VK / форумов и разобранный LLM в структур
 | **`site/index.html`** | **продуктовая страница-агрегатор** — ванильный JS, без сборки | **есть, проверена прогоном 05.09.2026** |
 | `site/app.js` | всё приложение, ~830 строк | есть |
 | `site/app.css` | стили и токены | есть |
-| `site/seed.js` · `site/data/feed.json` | **живой фид** из БД (`meta.synthetic=false`, 5 000 лотов — потолок, объявления первыми, затем три витрины; 15.09 вечер); синтетика 05.09 — `data/feed_synthetic_2026-09-05.*` | есть, пишется `python -m hmb export` |
+| `site/seed.js` · `site/data/feed.json` | **живой фид** из БД (`meta.synthetic=false`, 5 000 лотов — потолок: все объявления, затем витрины по квоте RU 60 % / остальные, источники по кругу; 15.09 18:20: RU 2 908 · DE 804 · DK 644 · CA 644); синтетика 05.09 — `data/feed_synthetic_2026-09-05.*` | есть, пишется `python -m hmb export` |
 | `site/tools/gen_seed.py` | детерминированный генератор корпуса (seed=20260905) | есть |
 | `index.html` | **дизайн-прототип** на React 18 + Babel с CDN | есть |
 | `data.jsx` | домен-данные: 6 архетипов, 23 зоны тела, 1 полный архетип, 28 лотов | есть, **всё синтетическое** |
@@ -100,8 +103,8 @@ Telegram / VK / форумов и разобранный LLM в структур
 | `tweaks-panel.jsx` | панель настройки акцента и шрифтов | есть |
 | `styles.css` | токены: тёмная тёплая палитра oklch, металлические акценты | есть |
 | `kernel/` | ядро приёма из recruit: `telemetry`, `tg_web`, `telegram`, `llm`, `dedup`, `salary`, `ner_extractor`, `fx`, `mutation_audit`, стражи схемы | **есть с 15.09.2026, 196 тестов проходят**; в цикл обхода не собрано |
-| **`apps/ingest/`** | приложение приёма поверх `kernel/`: 9 таблиц (SQLAlchemy 2.0, **SQLite `data/hmb.sqlite`**, Postgres — сменой `HMB_DATABASE_URL`), словарь 49 слотов × 1 686 алиасов RU/EN/DE/NL (+ проход по немецким композитам), импортёры `epicarmoury` · `calimacil` · `dein_larp_shop` · `kogda_igra` · `rulesets` · `kleinanzeigen` · `tg_web` · `olx`, классификатор без LLM с гейтом для лент сообществ, экспорт `site/data/feed.json` | **есть с 15.09.2026**; `python -m hmb status` — числа |
-| `data/hmb.sqlite` | 9 018 карточек трёх витрин (Epic Armoury 1 872 · Calimacil 3 929 · Dein LARP Shop 3 217; со слотом 89 / 97 / 88 %), **161 объявление** (DE, kleinanzeigen; 3 без слота), 988 игр (880 VK / 34 TG), 435 постов TG-каналов игр → 0 лотов, 5 регламентов / 39 пределов; словарь v8 — 49 слотов, 1 686 алиасов (замер 15.09 17:35) | есть |
+| **`apps/ingest/`** | приложение приёма поверх `kernel/`: 9 таблиц (SQLAlchemy 2.0, **SQLite `data/hmb.sqlite`**, Postgres — сменой `HMB_DATABASE_URL`), словарь 49 слотов × 1 762 алиасов RU/EN/DE/NL (RU — основами, + проход по немецким композитам, «с ножнами» вырезается), импортёры `epicarmoury` · `calimacil` · `dein_larp_shop` · `donjon` · `wargearshop` · `mechiizpechi` (RU) · `kogda_igra` · `rulesets` · `kleinanzeigen` · `marktplaats` · `tg_web` · `olx`, классификатор без LLM с гейтом для лент сообществ, экспорт `site/data/feed.json` | **есть с 15.09.2026**; `python -m hmb status` — числа |
+| `data/hmb.sqlite` | 13 544 карточки шести витрин (Epic Armoury 1 872 · Calimacil 3 925 · Dein LARP Shop 3 217 · **RU: Донжон 1 757 · WarGear Shop 2 756 · «Мечи из Печи» 13**; со слотом 89 / 97 / 92 / 99.9 / 99.3 / 100 %), **431 объявление** (228 DE kleinanzeigen · 190 NL marktplaats · 13 RU «Барахолка» Донжона), 988 игр (880 VK / 34 TG), 435 постов TG-каналов игр → 0 лотов, 5 регламентов / 39 пределов; словарь v9 — 49 слотов, 1 880 алиасов (замер 15.09 18:20) | есть |
 | бэкенд FastAPI, боты, Alembic | — | **нет** (`create_all` вместо миграций — долг) |
 
 Ни одной реальной записи в проекте нет: все 28 лотов, цены и мастерские в
@@ -252,8 +255,13 @@ cd apps/ingest && .venv/bin/python -m hmb status        # три числа + к
 .venv/bin/python -m hmb import epicarmoury              # витрина, ~14 с, замер покрытия словаря
 .venv/bin/python -m hmb import kogda_igra               # календарь → games, ~13 мин на 1 000 игр
 .venv/bin/python -m hmb import calimacil                # витрина CA; dein_larp_shop — витрина DE (тот же Shopify-импортёр)
+.venv/bin/python -m hmb import donjon                   # RU-витрина donjon.ru: 55 разделов, ~94 запроса, ~3 мин; «Барахолка» → б/у-объявления
+.venv/bin/python -m hmb import wargearshop              # RU-витрина Storeland: 255 категорий из sitemap, ~7 мин; наличия в листинге нет
+.venv/bin/python -m hmb import mechiizpechi             # «Мечи из Печи» (orgs.biz): 13 позиций фабричного ПУ, спецификации со страниц товаров
+.venv/bin/python -m hmb reslot [--source X]             # после посева словаря: пересчёт слотов по сохранённым полям + число
 .venv/bin/python -m hmb import tg_web                   # t.me/s/ по каналам игр из games, вне квоты; 435 постов → 0 лотов (анонсы)
-.venv/bin/python -m hmb import kleinanzeigen            # объявления DE; 3–8 запросов на прогон, потом 403 дольше 15 мин — раз в час; курсор запросов в sources.meta
+.venv/bin/python -m hmb import kleinanzeigen            # объявления DE; 4–7 запросов на прогон до 403, блок снимается за ~15 мин — раз в 15 мин; курсор запросов в sources.meta
+.venv/bin/python -m hmb import marktplaats            # объявления NL: 8 запросов × 3 страницы, пауза 3 с, гейт по слоту (категория смешана с косплеем)
 .venv/bin/python -m hmb import olx                      # ТОЛЬКО из KZ/UA: с EU-egress 403
 .venv/bin/python -m hmb classify && .venv/bin/python -m hmb export   # объявления → лоты → site/data/feed.json
 .venv/bin/python -m pytest -q tests                     # 5 офлайн-тестов парсера и правил

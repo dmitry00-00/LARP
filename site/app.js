@@ -55,7 +55,10 @@ var Z = {
 };
 var MEASURE_RU = { head:"обхват головы", neck:"обхват шеи", chest:"обхват груди",
   waist:"обхват талии", arm:"длина руки", thigh:"обхват бедра",
-  shin:"длина голени", foot:"размер стопы" };
+  shin:"длина голени", foot:"размер стопы",
+  /* спецификации предмета (витрины, 15.09): не обмеры тела, но живут в той же таблице */
+  length_cm:"общая длина", blade_cm:"клинок", weight_g:"масса", hardness_shore_a:"жёсткость, Шор A",
+  chest_cm:"грудь (предмет)", head_cm:"голова (предмет)" };
 var COND_RU = { "new":"новое", used:"б/у", damaged:"под ремонт", any:"любое" };
 var SVC_RU = { repair:"ремонт", refit:"подгонка", custom:"на заказ",
   consumable:"расходники", appraisal:"оценка", logistics:"доставка", rent:"аренда" };
@@ -282,7 +285,50 @@ function renderLeft() {
   var mx = Math.max.apply(null, bins) || 1;
   var cut = S.priceMax == null ? maxP : S.priceMax;
 
+  var a = S.archById[S.arch];
+  var covered = 0;
+  a.required.forEach(function (sid) {
+    var has = S.rows.some(function (r) {
+      return r.dir === "offer" && r.slot === sid && r.status === "active" &&
+             !conflictOf(r) && (fitOf(r) === "fits" || fitOf(r) === "refit");
+    });
+    if (has) covered++;
+  });
+  var conflicted = visible().filter(function (r) { return !!conflictOf(r); }).length;
+
+  /* Напряжённость = запросов на одно предложение (см. renderRight до 15.09):
+     строки таблицы кликабельны и ставят фильтр по слоту — поэтому она слева,
+     среди фильтров, а не справа среди сводки. */
+  var m = {};
+  S.rows.forEach(function (r) {
+    if (r.dir === "service" || !r.slot || r.status !== "active") return;
+    m[r.slot] = m[r.slot] || { offer: 0, want: 0 };
+    m[r.slot][r.dir]++;
+  });
+  var def = Object.keys(m).map(function (k) {
+    var o = m[k].offer, w = m[k].want;
+    return { slot: k, o: o, w: w, t: o ? w / o : (w ? 99 : 0) };
+  }).sort(function (x, y) { return y.t - x.t; }).slice(0, 7);
+
   document.getElementById("railL").innerHTML =
+    '<div class="sec"><span class="eyebrow">архетип · регламент</span>' +
+      '<select id="archsel" style="width:100%;background:oklch(0.21 0.013 100);border:1px solid var(--line-1);' +
+      'border-radius:3px;padding:5px 7px;font-size:12.5px;color:var(--fg-1);outline:none">' +
+      S.feed.archetypes.map(function (x) {
+        return '<option value="' + x.id + '"' + (x.id === S.arch ? " selected" : "") + ">" +
+          esc(x.title) + " · " + x.yearFrom + "–" + x.yearTo + "</option>";
+      }).join("") + "</select>" +
+      '<div class="mono" style="font-size:10px;color:var(--accent);margin-top:5px">' +
+        a.yearFrom + "–" + a.yearTo + " · " + a.ruleset.toUpperCase() + " · " + esc(a.region) + "</div>" +
+      '<div style="font-size:11.5px;color:var(--fg-4);margin-top:5px;line-height:1.4">' + esc(a.blurb) + "</div>" +
+    "</div>" +
+    '<div class="sec" style="display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start">' +
+      paperdoll(96, S.f.slot || null) +
+      '<div><span class="eyebrow">слот закрыт</span><div class="num" style="font-size:19px;color:var(--fg-1)">' +
+        covered + "/" + a.required.length + "</div>" +
+      '<span class="eyebrow" style="margin-top:8px;display:block">конфликтов</span><div class="num" style="font-size:19px;color:' +
+        (conflicted ? "var(--rust)" : "var(--fg-4)") + '">' + conflicted + "</div></div>" +
+    "</div>" +
     '<div class="sec"><span class="eyebrow">подписки · алерты</span>' +
       (subs || '<div class="notice">Настройте фильтр и нажмите «+ подписка»: реестр посчитает совпадения и подсветит новые.</div>') +
     "</div>" +
@@ -297,7 +343,19 @@ function renderLeft() {
     facetBlock("слот", "slot", "slot", function (k) { return S.slotById[k] ? S.slotById[k].label : k; }) +
     facetBlock("регион стиля", "region", "region") +
     facetBlock("страна", "country", "country") +
-    facetBlock("источник", "source", "src", function (k) { return S.srcById[k] ? S.srcById[k].ref : k; });
+    facetBlock("источник", "source", "src", function (k) { return S.srcById[k] ? S.srcById[k].ref : k; }) +
+    '<div class="sec"><span class="eyebrow">дефицит рынка</span>' +
+      '<div style="font-size:11px;color:var(--fg-4);margin-bottom:6px;line-height:1.4">' +
+        "запросов на одно предложение — где выше, там ищут мастера, а не лот</div>" +
+      '<table class="mini"><thead><tr><th>слот</th><th>▲</th><th>▼</th><th>▼/▲</th></tr></thead><tbody>' +
+      def.map(function (d) {
+        var hot = d.t >= 0.8, warm = d.t >= 0.5;
+        return '<tr data-f="slot" data-v="' + d.slot + '"' + (S.f.slot === d.slot ? ' class="on"' : "") +
+          '><td style="color:var(--fg-2)">' +
+          esc(S.slotById[d.slot].short) + "</td><td>" + d.o + "</td><td>" + d.w +
+          '</td><td style="color:' + (hot ? "var(--rust)" : warm ? "var(--brass)" : "var(--fg-5)") + '">' +
+          (d.t >= 99 ? "—" : d.t.toFixed(2)) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
 }
 
 function renderTable() {
@@ -331,8 +389,10 @@ function renderTable() {
             ? Object.keys(r.need).map(function (k) { return esc(MEASURE_RU[k] || k) + " " + r.need[k]; }).join(" · ")
             : "без обмеров")
         : (mk ? esc(mk.title) : "мастер не указан") + (r.photos ? " · " + r.photos + " фото" : " · без фото");
-    td.push("<td><div class=\"t-title\">" + esc(r.title) + '</div><div class="t-sub">' + sub +
-      (r.urgency ? ' <span style="color:var(--rust)">⚑ ' + esc(r.urgency) + "</span>" : "") + "</div></td>");
+    td.push('<td><div class="t-cell">' + (r.image
+      ? '<img class="thumb" src="' + esc(r.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'
+      : "") + "<div><div class=\"t-title\">" + esc(r.title) + '</div><div class="t-sub">' + sub +
+      (r.urgency ? ' <span style="color:var(--rust)">⚑ ' + esc(r.urgency) + "</span>" : "") + "</div></div></div></td>");
     if (isSvc) td.push('<td class="r mono t-nowrap">' + r.days + " дн.</td>");
     else td.push('<td class="mono t-nowrap" style="color:' + (cf ? "var(--rust)" : "var(--fg-3)") + '">' +
       esc(r.period) + (cf ? ' <span title="' + (cf.kind === "early" ? "раньше" : "позже") +
@@ -355,7 +415,8 @@ function renderTable() {
     td.push('<td class="mono c" style="font-size:9px;color:var(--fg-4)" title="' + esc(src ? src.ref : "") + '">' +
       esc(src ? src.kind.toUpperCase().slice(0, 2) : "—") + "</td>");
     td.push('<td class="r mono t-nowrap" style="font-size:10.5px;color:' +
-      (r.age > 30 ? "var(--fg-5)" : r.age > 14 ? "var(--fg-4)" : "var(--fg-2)") + '">' + r.age + "д</td>");
+      (r.age == null || r.age > 30 ? "var(--fg-5)" : r.age > 14 ? "var(--fg-4)" : "var(--fg-2)") + '">' +
+      (r.age == null ? "—" : r.age + "д") + "</td>");
     return '<tr data-id="' + r.id + '" class="' + (S.open === r.id ? "sel " : "") +
       (r.status !== "active" ? "stale" : "") + '">' + td.join("") + "</tr>";
   }).join("");
@@ -394,67 +455,89 @@ function paperdoll(size, focusSlot) {
     "</g>" + parts + "</svg>";
 }
 
+function measureRow(k, v) {
+  /* обмеры тела в фиде — диапазон [lo, hi]; спецификации предмета — число */
+  var me = S.body[k], txt, tag = "";
+  if (Array.isArray(v)) {
+    txt = v[0] + "–" + v[1] + " см";
+    if (me != null) {
+      var off = me < v[0] ? v[0] - me : me > v[1] ? me - v[1] : 0;
+      tag = off === 0 ? '<span class="tag patina">вы ' + me + "</span>"
+          : off <= 4 ? '<span class="tag brass">Δ' + off + "</span>" : '<span class="tag rust">Δ' + off + "</span>";
+    }
+  } else txt = k === "weight_g" ? (v / 1000).toFixed(2) + " кг" : k === "hardness_shore_a" ? String(v) : v + " см";
+  return "<tr><td>" + esc(MEASURE_RU[k] || k) + "</td><td>" + txt + " " + tag + "</td></tr>";
+}
+
 function renderRight() {
-  var a = S.archById[S.arch], vis = visible();
-  var m = {};
-  S.rows.forEach(function (r) {
-    if (r.dir === "service" || !r.slot || r.status !== "active") return;
-    m[r.slot] = m[r.slot] || { offer: 0, want: 0 };
-    m[r.slot][r.dir]++;
-  });
-  /* Напряжённость = запросов на одно предложение. Абсолютная разница
-     ▼−▲ на этом корпусе даёт нули и минусы и ничего не показывает;
-     отношение работает при любом размере выборки. */
-  var def = Object.keys(m).map(function (k) {
-    var o = m[k].offer, w = m[k].want;
-    return { slot: k, o: o, w: w, t: o ? w / o : (w ? 99 : 0) };
-  }).sort(function (x, y) { return y.t - x.t; }).slice(0, 7);
+  var el = document.getElementById("railR");
+  var arr = S.open ? S.rows.filter(function (x) { return x.id === S.open; }) : [];
+  var body = Object.keys(S.body).map(function (k) {
+    return '<div class="kv"><span>' + esc(MEASURE_RU[k] || k) + "</span><span>" + S.body[k] + " см</span></div>";
+  }).join("") + '<button class="btn sm" style="margin-top:8px;width:100%" data-act="profile">изменить обмеры</button>';
 
-  var covered = 0;
-  a.required.forEach(function (sid) {
-    var has = S.rows.some(function (r) {
-      return r.dir === "offer" && r.slot === sid && r.status === "active" &&
-             !conflictOf(r) && (fitOf(r) === "fits" || fitOf(r) === "refit");
-    });
-    if (has) covered++;
-  });
-  var conflicted = vis.filter(function (r) { return !!conflictOf(r); }).length;
+  if (!arr.length) {
+    el.innerHTML = '<div class="sec"><span class="eyebrow">предмет</span>' +
+      '<div class="notice">Выберите строку в реестре — здесь появится сводка: цена на фоне слота, ' +
+      "обмеры и посадка, период против архетипа, источник.</div></div>" +
+      '<div class="sec"><span class="eyebrow">мои обмеры</span>' + body + "</div>";
+    return;
+  }
+  var r = arr[0], a = S.archById[S.arch], cf = conflictOf(r), fit = fitOf(r);
+  var mk = r.maker ? S.makerById[r.maker] : null, src = S.srcById[r.source];
+  var sl = r.slot ? S.slotById[r.slot] : null;
+  var peers = S.rows.filter(function (x) { return x.dir === "offer" && x.slot === r.slot && x.priceRub; });
+  var sp = peers.map(function (x) { return x.priceRub; }).sort(function (x, y) { return x - y; });
+  var pct = sp.length ? Math.round(sp.filter(function (p) { return p < r.priceRub; }).length / sp.length * 100) : null;
+  var med = sp.length ? sp[Math.floor(sp.length / 2)] : null;
+  var ms = Object.keys(r.measures || {});
 
-  document.getElementById("railR").innerHTML =
-    '<div class="sec"><span class="eyebrow">архетип · регламент</span>' +
-      '<select id="archsel" style="width:100%;background:oklch(0.21 0.013 100);border:1px solid var(--line-1);' +
-      'border-radius:3px;padding:5px 7px;font-size:12.5px;color:var(--fg-1);outline:none">' +
-      S.feed.archetypes.map(function (x) {
-        return '<option value="' + x.id + '"' + (x.id === S.arch ? " selected" : "") + ">" +
-          esc(x.title) + " · " + x.yearFrom + "–" + x.yearTo + "</option>";
-      }).join("") + "</select>" +
-      '<div class="mono" style="font-size:10px;color:var(--accent);margin-top:5px">' +
-        a.yearFrom + "–" + a.yearTo + " · " + a.ruleset.toUpperCase() + " · " + esc(a.region) + "</div>" +
-      '<div style="font-size:11.5px;color:var(--fg-4);margin-top:5px;line-height:1.4">' + esc(a.blurb) + "</div>" +
+  el.innerHTML =
+    (r.image ? '<a class="pic" href="' + esc(r.sourceUrl || r.image) + '" target="_blank" rel="noopener">' +
+      '<img src="' + esc(r.image) + '" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></a>' : "") +
+    '<div class="sec"><span class="eyebrow">' +
+      (r.dir === "offer" ? "предложение" : r.dir === "want" ? "запрос" : "услуга") +
+      " · " + esc(sl ? sl.label : "—") + "</span>" +
+      '<div class="serif" style="font-size:16px;color:var(--fg-1);margin-top:3px;line-height:1.3">' + esc(r.title) + "</div>" +
+      '<div class="mono dim" style="font-size:10.5px;margin-top:5px">' +
+        esc(r.city || "") + (r.country ? " · " + esc(r.country) : "") + " · " +
+        esc(COND_RU[r.condition] || "состояние не указано") + "</div>" +
+      '<div class="num" style="font-size:19px;color:var(--fg-1);margin-top:8px">' + fmtCur(r.priceRub) +
+        (r.currencyNative && r.currencyNative !== S.cur
+          ? ' <span class="dim" style="font-size:11px">' + (r.priceNative != null ? r.priceNative + " " + esc(r.currencyNative) : "") + "</span>" : "") +
+      "</div>" +
+      '<div style="display:flex;gap:6px;margin-top:10px">' +
+        (r.sourceUrl ? '<a class="btn primary sm" href="' + esc(r.sourceUrl) + '" target="_blank" rel="noopener">оригинал ↗</a>' : "") +
+        '<button class="btn sm" data-act="fav">' + (S.fav[r.id] ? "★" : "☆") + "</button>" +
+        '<button class="btn sm ghost" data-act="more">подробнее</button></div>' +
     "</div>" +
-    '<div class="sec">' + paperdoll(172, null) + "</div>" +
-    '<div class="sec" style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-      '<div><span class="eyebrow">слот закрыт</span><div class="num" style="font-size:19px;color:var(--fg-1)">' +
-        covered + "/" + a.required.length + "</div></div>" +
-      '<div><span class="eyebrow">конфликтов</span><div class="num" style="font-size:19px;color:' +
-        (conflicted ? "var(--rust)" : "var(--fg-4)") + '">' + conflicted + "</div></div>" +
-    "</div>" +
-    '<div class="sec"><span class="eyebrow">дефицит рынка</span>' +
-      '<div style="font-size:11px;color:var(--fg-4);margin-bottom:6px;line-height:1.4">' +
-        "запросов на одно предложение — где выше, там ищут мастера, а не лот</div>" +
-      '<table class="mini"><thead><tr><th>слот</th><th>▲</th><th>▼</th><th>▼/▲</th></tr></thead><tbody>' +
-      def.map(function (d) {
-        var hot = d.t >= 0.8, warm = d.t >= 0.5;
-        return '<tr data-f="slot" data-v="' + d.slot + '"><td style="color:var(--fg-2)">' +
-          esc(S.slotById[d.slot].short) + "</td><td>" + d.o + "</td><td>" + d.w +
-          '</td><td style="color:' + (hot ? "var(--rust)" : warm ? "var(--brass)" : "var(--fg-5)") + '">' +
-          (d.t >= 99 ? "—" : d.t.toFixed(2)) + "</td></tr>";
-      }).join("") + "</tbody></table></div>" +
-    '<div class="sec"><span class="eyebrow">мои обмеры</span>' +
-      Object.keys(S.body).map(function (k) {
-        return '<div class="kv"><span>' + esc(MEASURE_RU[k] || k) + "</span><span>" + S.body[k] + " см</span></div>";
-      }).join("") +
-      '<button class="btn sm" style="margin-top:8px;width:100%" data-act="profile">изменить обмеры</button></div>';
+    '<div class="sec"><span class="eyebrow">цена на фоне слота</span><table class="det">' +
+      (med ? "<tr><td>медиана (" + sp.length + " лот.)</td><td>" + fmtCur(med) + "</td></tr>" : "") +
+      (pct != null ? "<tr><td>перцентиль</td><td>" + pct + "%</td></tr>" : "") +
+      "</table></div>" +
+    (r.dir !== "want"
+      ? '<div class="sec"><span class="eyebrow">обмеры · посадка</span>' +
+        (ms.length
+          ? '<table class="det">' + ms.map(function (k) { return measureRow(k, r.measures[k]); }).join("") +
+            (r.weightG && ms.indexOf("weight_g") < 0 ? "<tr><td>масса</td><td>" + (r.weightG / 1000).toFixed(2) + " кг</td></tr>" : "") +
+            "</table>" +
+            (fit === "fits" ? '<div style="margin-top:6px"><span class="tag patina">подойдёт</span></div>' :
+             fit === "refit" ? '<div style="margin-top:6px"><span class="tag brass">подгонка</span></div>' :
+             fit === "no" ? '<div style="margin-top:6px"><span class="tag rust">не тот размер</span></div>' : "")
+          : '<div class="notice">Обмеров нет — лот не участвует в размерном матче.</div>') + "</div>"
+      : "") +
+    '<div class="sec"><span class="eyebrow">период против архетипа</span>' +
+      '<div style="font-size:12px;color:' + (cf ? "var(--rust)" : r.yearFrom == null ? "var(--fg-4)" : "var(--patina)") + '">' +
+      (r.yearFrom == null ? "Период у лота не указан — конфликт не считается."
+        : cf ? "Конфликт: " + (cf.kind === "early" ? "раньше" : "позже") + " окна архетипа на ~" + cf.years + " лет."
+        : "Попадает в окно «" + esc(a.title) + "», " + a.yearFrom + "–" + a.yearTo + ".") + "</div></div>" +
+    (mk ? '<div class="sec"><span class="eyebrow">мастер · продавец</span><div style="color:var(--fg-1)">' + esc(mk.title) +
+          (mk.verified ? ' <span class="tag patina">проверен</span>' : "") + "</div></div>" : "") +
+    '<div class="sec"><span class="eyebrow">источник</span><table class="det">' +
+      "<tr><td>откуда</td><td>" + esc(src ? src.ref.replace(/^https?:\/\/(www\.)?/, "") : "—") + "</td></tr>" +
+      "<tr><td>опубликовано</td><td>" + (r.postedAt ? esc(r.postedAt) + " · " + r.age + " дн." : "—") + "</td></tr>" +
+      "<tr><td>фото у источника</td><td>" + (r.photos || 0) + "</td></tr>" +
+      "<tr><td>статус</td><td>" + (r.status === "active" ? "активно" : "протухло") + "</td></tr></table></div>";
 }
 
 function renderStatus() {
@@ -489,9 +572,12 @@ function renderDrawer() {
 
   if (r.dir !== "service") {
     body += '<div class="dsec"><span class="eyebrow">фото · ' + (r.photos || 0) + "</span>" +
-      (r.photos
-        ? '<div class="photos">' + Array.apply(null, { length: Math.min(r.photos, 8) }).map(function (_, i) {
-            return '<div class="photo">' + (i + 1) + "</div>"; }).join("") + "</div>"
+      (r.image
+        ? '<a class="pic" href="' + esc(r.sourceUrl || r.image) + '" target="_blank" rel="noopener"><img src="' + esc(r.image) +
+          '" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.style.display=\'none\'"></a>' +
+          '<div class="mono dim" style="font-size:10px;margin-top:4px">картинка с сайта магазина, по прямой ссылке</div>'
+        : r.photos
+        ? '<div class="notice">У источника ' + r.photos + ' фото — смотреть в оригинале: фото частных объявлений не републикуем.</div>'
         : '<div class="notice">Фото нет. Для б/у это ключевой пробел: состояние стали без фотографии ' +
           "не проверяется, а пост удалят через час после сделки — парсер обязан качать вложения " +
           "при первом же обходе (docs/DATA_SOURCES.md §1).</div>") + "</div>";
@@ -685,9 +771,10 @@ function matchSub(sub) {
 
 /* ═══ 7. События ═══ */
 function closeLayer() {
-  S.open = null; S.modal = null;
+  /* закрывается только слой (панель/модалка); выбранный предмет остаётся в сводке справа */
+  S.modal = null;
   document.getElementById("layer").innerHTML = "";
-  renderTable(); renderLeft();
+  renderTable(); renderLeft(); renderRight();
 }
 
 document.addEventListener("click", function (e) {
@@ -736,17 +823,20 @@ document.addEventListener("click", function (e) {
       S.cur = ks[(ks.indexOf(S.cur) + 1) % ks.length];
       store.set("cur", S.cur); renderAll(); renderDrawer();
     } else if (a === "fav") {
-      S.fav[S.open] = !S.fav[S.open]; store.set("fav", S.fav); renderDrawer();
+      S.fav[S.open] = !S.fav[S.open]; store.set("fav", S.fav); renderRight();
+      if (document.querySelector(".drawer")) renderDrawer();
+    } else if (a === "more") { renderDrawer();
     } else if (a === "orig") {
       var r = S.rows.filter(function (x) { return x.id === S.open; })[0];
-      toast("Оригинал: " + (r && r.sourceRef ? r.sourceRef : "источник не указан") +
-            " — в рабочей версии здесь прямая ссылка на пост.");
+      if (r && r.sourceUrl) window.open(r.sourceUrl, "_blank", "noopener");
+      else toast("У этой записи нет ссылки на оригинал: " + (r && r.sourceRef ? r.sourceRef : "источник не указан"));
     }
     return;
   }
   if ((el = t.closest("tbody tr[data-id]"))) {
-    S.open = el.dataset.id; S.seen[S.open] = 1; store.set("seen", S.seen);
-    renderTable(); renderDrawer(); return;
+    S.open = S.open === el.dataset.id ? null : el.dataset.id;
+    if (S.open) { S.seen[S.open] = 1; store.set("seen", S.seen); }
+    renderTable(); renderRight(); return;
   }
 });
 
