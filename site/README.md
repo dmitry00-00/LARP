@@ -67,3 +67,11 @@ python3 site/tools/gen_seed.py
 `../index.html` — **дизайн-прототип** на React через CDN с Babel в браузере
 и панелью Tweaks. Он остаётся песочницей для формы. Продуктовая страница —
 эта. Не путать: правки формы делаются в прототипе, правки продукта — здесь.
+
+## Публикация (с 15.09.2026)
+
+Страница живёт на GitHub Pages: `https://dmitry00-00.github.io/LARP/`.
+Деплой — `.github/workflows/pages.yml`: на каждый пуш в `main`, трогающий
+`site/**`, в артефакт кладутся `index.html`, `app.css`, `app.js` и
+`data/feed.json` (без `seed.js` — по сети он не нужен). База и приём остаются
+на Маке; обновление сайта = `hmb export` → коммит `site/data/feed.json` → пуш.
