@@ -38,10 +38,11 @@ def _select_lots(db: Session, max_lots: int) -> list[Lot]:
     другие. До 15.09 сортировка шла по `posted_at`, и 4 500 RU-карточек без
     даты публикации (donjon, wargearshop) в фид не попадали вовсе.
     """
-    ads = list(db.scalars(select(Lot).where(Lot.status == "active", Lot.kind == "ad")
+    # объявления и услуги — всегда целиком: их мало, и это две из трёх сторон рынка
+    ads = list(db.scalars(select(Lot).where(Lot.status == "active", (Lot.kind == "ad") | (Lot.direction == "service"))
                           .order_by(Lot.posted_at.desc().nullslast(), Lot.id.desc())))
     by_src: dict[str, list[Lot]] = {}
-    for l in db.scalars(select(Lot).where(Lot.status == "active", Lot.kind == "catalog").order_by(Lot.id)):
+    for l in db.scalars(select(Lot).where(Lot.status == "active", Lot.kind == "catalog", Lot.direction != "service").order_by(Lot.id)):
         by_src.setdefault(l.source_id, []).append(l)
     room = max(0, max_lots - len(ads))
     ru = [v for k, v in by_src.items() if (v[0].country or "") == "RU"]
@@ -93,8 +94,12 @@ def build(db: Session, max_lots: int = 5000) -> dict:
             posted = posted.replace(tzinfo=UTC)   # SQLite отдаёт naive даже при timezone=True
         age = (now - posted).days if posted else None
         lots.append({
-            "id": f"{'o' if l.direction == 'offer' else 'w'}-{l.source_id}-{l.external_id}",
-            "dir": l.direction, "kind": l.kind, "slot": l.slot_id, "title": l.title,
+            "id": f"{'o' if l.direction == 'offer' else 's' if l.direction == 'service' else 'w'}-{l.source_id}-{l.external_id}",
+            "dir": l.direction,
+            # у услуги `kind` на странице — вид услуги (rent · custom · …), у предметов — ad · catalog
+            "kind": (l.specs or {}).get("service_kind", "custom") if l.direction == "service" else l.kind,
+            "days": (l.specs or {}).get("days"), "scope": [l.slot_id] if l.slot_id else ["*"], "remote": False,
+            "slot": l.slot_id, "title": l.title,
             "period": None, "yearFrom": None, "yearTo": None, "region": None,
             "condition": l.condition, "price": l.price_rub if l.price_rub is not None else l.price, "priceNative": l.price,
             "currency": "RUB" if l.price_rub is not None else l.currency, "currencyNative": l.currency,
@@ -111,7 +116,8 @@ def build(db: Session, max_lots: int = 5000) -> dict:
     counts = {
         "offers": sum(1 for x in lots if x["dir"] == "offer"), "wants": sum(1 for x in lots if x["dir"] == "want"),
         "ads": sum(1 for x in lots if x["kind"] == "ad"), "catalog": sum(1 for x in lots if x["kind"] == "catalog"),
-        "withSlot": sum(1 for x in lots if x["slot"]), "services": 0,
+        "services": sum(1 for x in lots if x["dir"] == "service"),
+        "withSlot": sum(1 for x in lots if x["slot"]),
     }
     feed = {
         "meta": {"generated": now.date().isoformat(), "generator": "apps/ingest/hmb/export_feed.py", "synthetic": False,

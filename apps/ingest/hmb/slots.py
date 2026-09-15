@@ -188,7 +188,7 @@ def reslot(db: Session, source_id: str | None = None) -> dict:
         sp = lot.specs or {}
         path = sp.get("path") or []
         hint = " · ".join([*path[-2:], sp.get("category") or sp.get("product_type") or ""]).strip(" ·")
-        text = sp.get("description") or sp.get("tags") or ""
+        text = " · ".join(t for t in (sp.get("vk_category"), sp.get("description") or sp.get("tags")) if t)
         if not text and lot.inbox_item_id:
             # объявления: описание живёт в raw_text сырья, как и при classify
             item = db.get(InboxItem, lot.inbox_item_id)

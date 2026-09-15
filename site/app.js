@@ -61,9 +61,9 @@ var MEASURE_RU = { head:"обхват головы", neck:"обхват шеи",
   chest_cm:"грудь (предмет)", head_cm:"голова (предмет)" };
 var COND_RU = { "new":"новое", used:"б/у", damaged:"под ремонт", any:"любое" };
 var SVC_RU = { repair:"ремонт", refit:"подгонка", custom:"на заказ",
-  consumable:"расходники", appraisal:"оценка", logistics:"доставка", rent:"аренда" };
+  consumable:"расходники", appraisal:"оценка", logistics:"доставка", rent:"аренда", event:"мероприятие" };
 var SVC_GL = { repair:"РМ", refit:"ПД", custom:"ЗК", consumable:"РХ",
-  appraisal:"ОЦ", logistics:"ЛГ", rent:"АР" };
+  appraisal:"ОЦ", logistics:"ЛГ", rent:"АР", event:"МР" };
 
 /* ═══ 3. Загрузка данных ═══ */
 function boot() {
@@ -393,7 +393,7 @@ function renderTable() {
       ? '<img class="thumb" data-src="' + esc(r.image) + '" alt="" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'
       : "") + "<div><div class=\"t-title\">" + esc(r.title) + '</div><div class="t-sub">' + sub +
       (r.urgency ? ' <span style="color:var(--rust)">⚑ ' + esc(r.urgency) + "</span>" : "") + "</div></div></div></td>");
-    if (isSvc) td.push('<td class="r mono t-nowrap">' + r.days + " дн.</td>");
+    if (isSvc) td.push('<td class="r mono t-nowrap">' + (r.days == null ? "—" : r.days + " дн.") + "</td>");
     else td.push('<td class="mono t-nowrap" style="color:' + (cf ? "var(--rust)" : "var(--fg-3)") + '">' +
       esc(r.period) + (cf ? ' <span title="' + (cf.kind === "early" ? "раньше" : "позже") +
       " архетипа на ~" + cf.years + ' лет">⚠</span>' : "") + "</td>");
@@ -685,7 +685,7 @@ function renderDrawer() {
           return '<div class="card" data-goto="' + x.id + '"><div class="row-between"><div>' + esc(x.title) +
             '</div><div class="num t-nowrap">' + fmtCur(x.priceRub) + "</div></div>" +
             '<div class="mono dim" style="font-size:10.5px;margin-top:3px">' + esc(SVC_RU[x.kind]) + " · " +
-            esc(xm ? xm.title : "") + " · " + x.days + " дн. · " + (x.remote ? "по почте" : "очно") + "</div></div>";
+            esc(xm ? xm.title : "") + " · " + (x.days == null ? "срок не указан" : x.days + " дн.") + " · " + (x.remote ? "по почте" : "очно") + "</div></div>";
         }).join("") + "</div>";
     }
   }

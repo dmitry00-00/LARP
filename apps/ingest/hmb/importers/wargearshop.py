@@ -23,6 +23,7 @@ from sqlalchemy import select
 
 from hmb.http import Http
 from hmb.models import Lot, Source
+from hmb.services import service_kind_of
 from hmb.slots import SlotMatcher
 
 log = structlog.get_logger("hmb.import.wargearshop")
@@ -121,11 +122,14 @@ def run(db, http: Http | None = None, limit_pages: int | None = None) -> dict:
                 db.add(lot); created += 1
             else:
                 updated += 1
+            svc = service_kind_of(" · ".join(crumbs), label, it["title"])
+            lot.direction = "service" if svc else "offer"
             lot.title = it["title"][:500]
             lot.price = it["price"]; lot.currency = "RUB"
             lot.slot_id = slot_id; lot.slot_confidence = conf
             lot.source_url = it["url"]
-            lot.specs = {"category": label, "path": crumbs, **({"price_old": it["price_old"]} if it["price_old"] else {})}
+            lot.specs = {"category": label, "path": crumbs, **({"price_old": it["price_old"]} if it["price_old"] else {}),
+                         **({"service_kind": svc} if svc else {})}
             lot.photos_count = 1 if it["has_photo"] else 0
             lot.image_url = it["image_url"]
             lot.maker = "WarGear Shop"
