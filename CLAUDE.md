@@ -263,6 +263,7 @@ cd apps/ingest && .venv/bin/python -m hmb status        # три числа + к
 .venv/bin/python -m hmb import mytholon                 # Shopware 6, robots запрещает ?query → только первые страницы 196 категорий, ~7 мин
 .venv/bin/python -m hmb import andracor                 # OXID, 89 категорий с пагинацией, ~4 мин
 .venv/bin/python -m hmb import allrpg && hmb classify   # allrpg.info «Склад»: 13 позиций RU, аренда/продажа
+.venv/bin/python -m hmb match [--slot X --max-price N --country RU --q слово]   # матчер спроса Г2.2; без аргументов — все want → matches
 .venv/bin/python -m hmb reslot [--source X]             # после посева словаря: пересчёт слотов по сохранённым полям + число
 .venv/bin/python -m hmb import tg_web                   # t.me/s/ по каналам игр из games, вне квоты; 435 постов → 0 лотов (анонсы)
 .venv/bin/python -m hmb import kleinanzeigen            # объявления DE; 4–7 запросов на прогон до 403, блок снимается за ~15 мин — раз в 15 мин; курсор запросов в sources.meta

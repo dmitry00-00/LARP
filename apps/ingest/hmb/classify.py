@@ -26,7 +26,12 @@ from hmb.slots import SlotMatcher
 from kernel.db.fx import to_rub_usd
 from kernel.skills.salary import parse_salary
 
-_WANT = re.compile(r"\b(ищу|куплю|купим|нужен|нужна|нужны|в поиске|suche|gesucht|kaufe|gezocht|zoek|wtb|looking for|wanted|szukam)\b", re.I)
+# NL: «op zoek naar …?» — обращение продавца к покупателю («ищешь меч?»), не спрос:
+# 2 из 3 первых `want` marktplaats оказались рекламой (15.09). Спрос — «gezocht»,
+# «ik zoek», «wij zoeken»; голое «zoek» снято. То же для EN «looking for» — только
+# в начале текста (см. direction_of).
+_WANT = re.compile(r"\b(ищу|куплю|купим|нужен|нужна|нужны|в поиске|suche|gesucht|kaufe|gezocht|ik zoek|wij zoeken|wtb|looking for|wanted|szukam)\b", re.I)
+_WANT_SELLER_COPY = re.compile(r"\b(ben jij|bent u|are you|bist du|sind sie)\s+(op zoek|looking|auf der suche)\b", re.I)
 _USED = re.compile(r"\b(б/у|бу|б\.у\.|used|second[- ]hand|gebraucht|gebrauchsspuren|gebrauchter|gebrauchte|gebruikt|tweedehands|getragen|benutzt|wenig genutzt|bespielt|pre-owned|worn)\b", re.I)
 _NEW = re.compile(r"\b(новый|новая|новое|new|neu|neuwertig|ungetragen|nieuw|ovp|unbenutzt)\b", re.I)
 _DIGEST_PRICE = re.compile(r"\d+\s*(?:€|eur|₽|руб|тг|₸|грн|zł|\$)", re.I)
@@ -41,7 +46,7 @@ _NEGATION = re.compile(r"\b(nicht|kein|keine|не|no|not)\s+(?:mehr\s+)?(gebrauc
 
 
 def direction_of(text: str) -> str:
-    head = text[:200]
+    head = _WANT_SELLER_COPY.sub(" ", text[:200])
     return "want" if _WANT.search(head) else "offer"
 
 

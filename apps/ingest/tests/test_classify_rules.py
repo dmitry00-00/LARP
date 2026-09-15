@@ -5,6 +5,8 @@ def test_direction_want_markers_multilingual():
     assert direction_of("Suche LARP Schwert bis 60 €") == "want"
     assert direction_of("Ищу наручи кожаные, Москва") == "want"
     assert direction_of("Gezocht: larp zwaard") == "want"
+    assert direction_of("Zwaard NIEUW. Ben jij op zoek naar een mooi zwaard? Bestel!") == "offer"   # реклама продавца, не спрос
+    assert direction_of("Plakfolie kopen? Op zoek naar hip plakfolie? Bij ons 1001 soorten") == "offer"
     assert direction_of("Verkaufe LARP Schwert, neuwertig") == "offer"
 
 

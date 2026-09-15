@@ -387,7 +387,7 @@ function renderTable() {
       : r.dir === "want"
         ? (Object.keys(r.need || {}).length
             ? Object.keys(r.need).map(function (k) { return esc(MEASURE_RU[k] || k) + " " + r.need[k]; }).join(" · ")
-            : "без обмеров")
+            : "без обмеров") + (r.matchCount != null ? " · совпадений " + r.matchCount : "")
         : (mk ? esc(mk.title) : "мастер не указан") + (r.photos ? " · " + r.photos + " фото" : " · без фото");
     td.push('<td><div class="t-cell">' + (r.image
       ? '<img class="thumb" data-src="' + esc(r.image) + '" alt="" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'

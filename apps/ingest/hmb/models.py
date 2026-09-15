@@ -201,5 +201,26 @@ class RulesetLimit(Base):
     ruleset: Mapped[Ruleset] = relationship(back_populates="limits")
 
 
+class Match(TimestampMixin, Base):
+    """Совпадение запроса (want или подписка) с предложением — Г2.2 ROADMAP.
+
+    `want_id` — лот `direction=want`; `sub_id` — внешняя подписка (страница,
+    бот) по ключу; одно из двух. `score` 0..1, `reasons` — почему (слот,
+    бюджет, регион, размер), чтобы алерт объяснял себя. Строка живёт, пока
+    живо предложение; `seen_at` — когда показали человеку (алерт один раз).
+    """
+
+    __tablename__ = "matches"
+    __table_args__ = (UniqueConstraint("want_id", "sub_id", "offer_id", name="uq_match"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    want_id: Mapped[int | None] = mapped_column(ForeignKey("lots.id"), index=True)
+    sub_id: Mapped[str | None] = mapped_column(String(64), index=True)
+    offer_id: Mapped[int] = mapped_column(ForeignKey("lots.id"), nullable=False, index=True)
+    score: Mapped[float] = mapped_column(Float, nullable=False)
+    reasons: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class CurrencyRate(Base, CurrencyRateMixin):
     __tablename__ = "currency_rates"

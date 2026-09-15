@@ -18,7 +18,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from hmb import config
-from hmb.models import Lot, Slot, Source
+from hmb.models import Lot, Match, Slot, Source
 from kernel.db.fx import get_usd_per
 
 
@@ -87,6 +87,7 @@ def build(db: Session, max_lots: int = 5000) -> dict:
     sources = {src.id: src for src in db.scalars(select(Source))}
     lots = []
     now = datetime.now(UTC)
+    match_counts = dict(db.execute(select(Match.want_id, func.count()).where(Match.want_id.isnot(None)).group_by(Match.want_id)).all())
     for l in _select_lots(db, max_lots):
         src = sources.get(l.source_id)
         posted = l.posted_at
@@ -110,6 +111,7 @@ def build(db: Session, max_lots: int = 5000) -> dict:
             "maker": l.maker, "source": l.source_id, "sourceRef": (src.title if src else l.source_id), "sourceUrl": l.source_url,
             "postedAt": posted.date().isoformat() if posted else None, "age": age,
             "provenance": l.provenance, "status": l.status, "slotConfidence": l.slot_confidence,
+            "matchCount": match_counts.get(l.id) if l.direction == "want" else None,   # матчер Г2.2, таблица matches
         })
     makers_seen = sorted({x["maker"] for x in lots if x.get("maker")})
     makers = [{"id": m, "title": m, "country": None, "city": None, "leadDays": None, "queueOpen": None, "spec": [], "rating": None, "verified": False} for m in makers_seen]

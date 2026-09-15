@@ -49,6 +49,21 @@ def cmd_reslot(a):
     print(json.dumps({"seed": seeded, **res}, ensure_ascii=False, indent=1))
 
 
+def cmd_match(a):
+    """Матчер спроса: запрос из аргументов или все `want` → `matches`."""
+    dbm.init_db()
+    from hmb.match import WantSpec, match_spec, run_wants, spec_from_filters
+    with dbm.session() as s:
+        if a.slot or a.max_price or a.country or a.q:
+            spec = spec_from_filters({"slot": a.slot, "priceMax": a.max_price, "country": a.country, "cond": a.cond, "q": a.q})
+            res = match_spec(s, spec, top=a.top)
+            for offer, sc, why in res:
+                print(f"{sc:.2f}  {offer.slot_id:14} {str(offer.price_rub or offer.price):>8} {offer.currency or '':4} {offer.country or '':2} {offer.city or '':14} | {offer.title[:60]} | {why}")
+            print(json.dumps({"candidates_scored": len(res), "spec": {**spec.__dict__, "words": sorted(spec.words)}}, ensure_ascii=False, default=str))
+        else:
+            print(json.dumps(run_wants(s, top=a.top), ensure_ascii=False, indent=1))
+
+
 def cmd_status(_a):
     dbm.init_db()
     from sqlalchemy import func, select
@@ -77,6 +92,8 @@ def main(argv=None):
     pc = sub.add_parser("classify"); pc.add_argument("--limit", type=int, default=5000); pc.set_defaults(fn=cmd_classify)
     sub.add_parser("export").set_defaults(fn=cmd_export)
     pr = sub.add_parser("reslot"); pr.add_argument("--source"); pr.set_defaults(fn=cmd_reslot)
+    pm = sub.add_parser("match"); pm.add_argument("--slot"); pm.add_argument("--max-price", type=int); pm.add_argument("--country")
+    pm.add_argument("--cond"); pm.add_argument("--q"); pm.add_argument("--top", type=int, default=20); pm.set_defaults(fn=cmd_match)
     sub.add_parser("status").set_defaults(fn=cmd_status)
     a = p.parse_args(argv)
     return a.fn(a)
