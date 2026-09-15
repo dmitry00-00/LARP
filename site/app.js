@@ -390,7 +390,7 @@ function renderTable() {
             : "без обмеров")
         : (mk ? esc(mk.title) : "мастер не указан") + (r.photos ? " · " + r.photos + " фото" : " · без фото");
     td.push('<td><div class="t-cell">' + (r.image
-      ? '<img class="thumb" src="' + esc(r.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'
+      ? '<img class="thumb" data-src="' + esc(r.image) + '" alt="" referrerpolicy="no-referrer" onerror="this.style.display=\'none\'">'
       : "") + "<div><div class=\"t-title\">" + esc(r.title) + '</div><div class="t-sub">' + sub +
       (r.urgency ? ' <span style="color:var(--rust)">⚑ ' + esc(r.urgency) + "</span>" : "") + "</div></div></div></td>");
     if (isSvc) td.push('<td class="r mono t-nowrap">' + r.days + " дн.</td>");
@@ -425,6 +425,28 @@ function renderTable() {
     ? '<table class="reg"><thead><tr>' + head + "</tr></thead><tbody>" + body + "</tbody></table>"
     : '<div class="empty"><div class="eyebrow">ничего не найдено</div>' +
       '<button class="btn" style="margin-top:14px" data-act="reset">сбросить фильтры</button></div>';
+  observeThumbs();
+}
+
+/* Миниатюры грузятся по видимости: `loading="lazy"` внутри прокручиваемого
+   #grid Chromium не срабатывал (15.09, 1 283 строки — ни одного запроса),
+   свой IntersectionObserver — срабатывает. Корень — сам #grid. */
+var _thumbIO = null;
+function observeThumbs() {
+  var grid = document.getElementById("grid");
+  var imgs = grid.querySelectorAll("img.thumb[data-src]");
+  if (!imgs.length) return;
+  if (!("IntersectionObserver" in window)) {
+    imgs.forEach(function (im) { im.src = im.dataset.src; im.removeAttribute("data-src"); }); return;
+  }
+  if (_thumbIO) _thumbIO.disconnect();
+  _thumbIO = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      var im = en.target; im.src = im.dataset.src; im.removeAttribute("data-src"); _thumbIO.unobserve(im);
+    });
+  }, { root: grid, rootMargin: "600px 0px" });
+  imgs.forEach(function (im) { _thumbIO.observe(im); });
 }
 
 function paperdoll(size, focusSlot) {

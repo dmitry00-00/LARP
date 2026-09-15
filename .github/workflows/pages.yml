@@ -27,6 +27,8 @@ jobs:
           mkdir -p _site/data
           cp site/index.html site/app.css site/app.js _site/
           cp site/data/feed.json _site/data/
+          # index.html подключает seed.js для file://; по сети он не нужен — пустая заглушка вместо 404
+          echo '/* по сети корпус берётся из data/feed.json */' > _site/seed.js
           test -s _site/data/feed.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
