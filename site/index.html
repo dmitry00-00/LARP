@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>HMB-Market — реестр снаряжения для ЛАРП</title>
+<meta name="description" content="Двунаправленный реестр снаряжения для ролевых игр живого действия (ЛАРП) и реконструкции: предложение, спрос и витрины мастерских в одной таблице, с проверкой по регламентам игр и обмерам."/>
+<meta name="color-scheme" content="dark"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600&family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="app.css"/>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22'%3E%3Crect width='22' height='22' fill='%231c1a15'/%3E%3Cg stroke='%23bf9a45' stroke-width='1.6' fill='none'%3E%3Cpath d='M4 4 L11 11 L18 4'/%3E%3Cpath d='M4 18 L11 11 L18 18'/%3E%3C/g%3E%3Ccircle cx='11' cy='11' r='2' fill='%23bf9a45'/%3E%3C/svg%3E"/>
+</head>
+<body>
+
+<div id="app">
+  <noscript>
+    <div style="padding:40px;max-width:640px;margin:0 auto;line-height:1.6">
+      <h1 style="font-family:Georgia,serif;font-weight:400">HMB-Market</h1>
+      <p>Реестр снаряжения для ролевых игр живого действия (ЛАРП) и реконструкции. Страница целиком
+      клиентская, для работы нужен JavaScript.</p>
+    </div>
+  </noscript>
+</div>
+
+<!-- Встроенный корпус: нужен, чтобы страница работала из file:// —
+     туда fetch не ходит. По http(s) он перекрывается data/feed.json. -->
+<script src="seed.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

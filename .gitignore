@@ -1,0 +1,18 @@
+# окружения и кэши
+.venv/
+*/.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+.thumbnail
+
+# база приёма и её журналы — данные, не код (фид для сайта — site/data/feed.json, он в git)
+data/hmb.sqlite
+data/hmb.sqlite-*
+data/*.log
+analysis/mutations/
+
+# секреты
+.env*
+*.session

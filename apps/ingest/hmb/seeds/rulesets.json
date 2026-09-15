@@ -1,0 +1,68 @@
+{
+  "_meta": {"date": "2026-09-15", "note": "Числовые пределы из правил систем игр. Источник каждого — analysis/larp-sources-2026-09/messy-notes/{ru-rulesets,en-market-and-catalogues}.md, дата обращения 15.09.2026. weapon_class — id слота или группа: any_weapon · blade · inertial · polearm · spear · pike · staff · flail_2h · shield_small · shield_medium · shield_large · shield_any · bow · crossbow · arrows."},
+  "rulesets": [
+    {"id": "warhammer_larp_ru", "title": "Warhammer LARP — Правила по допуску оружия ближнего боя", "version": null, "lang": "ru", "country": "RU",
+     "url": "https://warhammerlarp.ru/wiki/правила-по-допуску-оружия-ближнего-бо/", "accessed_at": "2026-09-15",
+     "note": "Сердечник + пенополимер. Луки и стрелы не описаны.",
+     "limits": [
+       {"weapon_class": "any_weapon", "metric": "hardness_shore_a", "op": "<=", "value": 30, "unit": "shore_a", "quote": "максимальная твёрдость поверхности ПО на любой его части…– 30А по Шору (40 Шор по шкале 0)"},
+       {"weapon_class": "blade", "metric": "length_cm", "op": "<=", "value": 200, "unit": "cm", "quote": "Клинковое: «не более 2 м»"},
+       {"weapon_class": "inertial", "metric": "length_cm", "op": "<=", "value": 160, "unit": "cm", "quote": "Инерционное (топоры, молоты): «не более 1,6 м»"},
+       {"weapon_class": "flail_2h", "metric": "length_cm", "op": "<=", "value": 200, "unit": "cm", "quote": "«2м для двуручных цепов»"},
+       {"weapon_class": "polearm", "metric": "length_cm", "op": "<=", "value": 230, "unit": "cm", "quote": "Древковое рубящее (алебарды): «не более 2,3 м»"},
+       {"weapon_class": "staff", "metric": "length_cm", "op": "<=", "value": 200, "unit": "cm", "quote": "Посохи: «до 2 м»"},
+       {"weapon_class": "pike", "metric": "length_cm", "op": "<=", "value": 350, "unit": "cm", "quote": "Пики: «не более 3,5 м»"},
+       {"weapon_class": "spear", "metric": "length_cm", "op": "<=", "value": 230, "unit": "cm", "quote": "Копья: «не более 230 см»"},
+       {"weapon_class": "any_weapon", "metric": "weight_g_per_m", "op": "<=", "value": 800, "unit": "g/m", "quote": "Максимальный вес оружия в соотношении с его длиной – 800 грамм на метр длины"},
+       {"weapon_class": "any_weapon", "metric": "weight_g", "op": "<=", "value": 2000, "unit": "g", "quote": "Общий вес оружия не должен превышать 2000 грамм"},
+       {"weapon_class": "shield_large", "metric": "size_cm", "op": "<=", "value": 140, "unit": "cm", "quote": "большой щит — 140×70 см"},
+       {"weapon_class": "shield_medium", "metric": "size_cm", "op": "<=", "value": 80, "unit": "cm", "quote": "обычный — 80×70 см или диаметр 80 см"},
+       {"weapon_class": "shield_small", "metric": "size_cm", "op": "<=", "value": 50, "unit": "cm", "quote": "малый — 50×40 см или диаметр 50 см"},
+       {"weapon_class": "shield_any", "metric": "mass_kg_per_m2", "op": "<=", "value": 6, "unit": "kg/m2", "quote": "Масса щита не должна превышать 6 кг на 1 м² защитной поверхности"}
+     ]},
+    {"id": "adventura_2025_12", "title": "«Адвентура» — Универсальные правила игровых сражений", "version": "2025.12.08-1", "lang": "ru", "country": "RU",
+     "url": "https://takeularp.ru/adventura-boyovka", "accessed_at": "2026-09-15",
+     "note": "Открытые правила для ЛАРП-проектов, Липецк. Доспех не классифицируется по слотам — только поражаемые зоны.",
+     "limits": [
+       {"weapon_class": "one_handed", "metric": "length_cm", "op": "<=", "value": 110, "unit": "cm", "quote": "Одноручное оружие: «Длина: до 110 см»"},
+       {"weapon_class": "two_handed", "metric": "length_cm", "op": "<=", "value": 200, "unit": "cm", "quote": "Двуручное оружие: «Длина: до 200 см»"},
+       {"weapon_class": "spear", "metric": "length_cm", "op": "<=", "value": 250, "unit": "cm", "quote": "Длина копья должна быть до 250 см"},
+       {"weapon_class": "polearm", "metric": "length_cm", "op": "<=", "value": 220, "unit": "cm", "quote": "алебарды до 220 см"},
+       {"weapon_class": "bow", "metric": "draw_kg", "op": "<=", "value": 15, "unit": "kg", "quote": "Луки должны иметь натяжение не более 15 кг"},
+       {"weapon_class": "crossbow", "metric": "draw_kg", "op": "<=", "value": 20, "unit": "kg", "quote": "Арбалеты должны иметь натяжение не более 20 кг"},
+       {"weapon_class": "arrows", "metric": "hardness_shore_a", "op": "<=", "value": 20, "unit": "shore_a", "quote": "Жёсткость мягкого наконечника должна быть не более 20 Шор А"},
+       {"weapon_class": "arrows", "metric": "head_mm", "op": ">=", "value": 50, "unit": "mm", "quote": "Диаметр наконечника должен составлять не менее 5 см"},
+       {"weapon_class": "shield_small", "metric": "diagonal_cm", "op": "<=", "value": 40, "unit": "cm", "quote": "Малый щит: «Максимальная диагональ: 40 см»"},
+       {"weapon_class": "shield_medium", "metric": "diagonal_cm", "op": "<=", "value": 100, "unit": "cm", "quote": "Средний щит: «Максимальная диагональ: 100 см (87 для круга)»"},
+       {"weapon_class": "shield_large", "metric": "diagonal_cm", "op": "<=", "value": 165, "unit": "cm", "quote": "Большой щит: «Максимальная диагональ: 165 см (112 диаметр для круга)»"}
+     ]},
+    {"id": "empire_lrp_uk", "title": "Empire LRP (Profound Decisions) — Weapons and armour rules", "version": null, "lang": "en", "country": "GB",
+     "url": "https://www.profounddecisions.co.uk/empire-wiki/", "accessed_at": "2026-09-15",
+     "note": "Открытая MediaWiki; 9 классов длины в дюймах — см. messy-notes/en-market-and-catalogues.md §3.1.",
+     "limits": [
+       {"weapon_class": "bow", "metric": "draw_lbs", "op": "<", "value": 30, "unit": "lbs", "quote": "<30 lbs at 28\""},
+       {"weapon_class": "arrows", "metric": "head_mm", "op": ">=", "value": 50, "unit": "mm", "quote": "arrowhead ≥50 mm"},
+       {"weapon_class": "arrows", "metric": "head_padding_mm", "op": ">=", "value": 25, "unit": "mm", "quote": "≥25 mm thickness"},
+       {"weapon_class": "any_weapon", "metric": "length_in", "op": ">=", "value": 8, "unit": "in", "quote": "минимальная длина 8\""},
+       {"weapon_class": "shield_any", "metric": "padding_mm", "op": ">=", "value": 6, "unit": "mm", "quote": "shield padding ≥6 mm"}
+     ]},
+    {"id": "belegarth_us", "title": "Belegarth — Book of War (weapon classes)", "version": null, "lang": "en", "country": "US",
+     "url": "https://geddon.org/", "accessed_at": "2026-09-15",
+     "note": "Американская традиция: hole test 2.5\" / 0.5\", унции.",
+     "limits": [
+       {"weapon_class": "one_handed", "metric": "length_in", "op": "<", "value": 48, "unit": "in", "quote": "Class 1 <48\""},
+       {"weapon_class": "one_handed", "metric": "weight_oz", "op": ">=", "value": 12, "unit": "oz", "quote": "≥12 oz при ≥24\""},
+       {"weapon_class": "two_handed", "metric": "length_in", "op": ">=", "value": 48, "unit": "in", "quote": "Class 2 ≥48\""},
+       {"weapon_class": "two_handed", "metric": "weight_oz", "op": ">=", "value": 24, "unit": "oz", "quote": "≥24 oz"},
+       {"weapon_class": "any_weapon", "metric": "hole_test_in", "op": ">=", "value": 2.5, "unit": "in", "quote": "тест 2.5\"-отверстие / 0.5\""}
+     ]},
+    {"id": "dagorhir_us", "title": "Dagorhir — Manual of Arms", "version": null, "lang": "en", "country": "US",
+     "url": "https://dagorhir.wiki/", "accessed_at": "2026-09-15", "note": "Blue 12–<48\", Red ≥48\"; hole test 2.5\" / 2\".",
+     "limits": [
+       {"weapon_class": "one_handed", "metric": "length_in", "op": ">=", "value": 12, "unit": "in", "quote": "Blue 12–<48\""},
+       {"weapon_class": "one_handed", "metric": "length_in", "op": "<", "value": 48, "unit": "in", "quote": "Blue 12–<48\""},
+       {"weapon_class": "two_handed", "metric": "length_in", "op": ">=", "value": 48, "unit": "in", "quote": "Red ≥48\""},
+       {"weapon_class": "arrows", "metric": "head_in", "op": ">=", "value": 2.5, "unit": "in", "quote": "face ≥2.5\""}
+     ]}
+  ]
+}

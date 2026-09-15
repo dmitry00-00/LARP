@@ -1,0 +1,200 @@
+---
+name: research-train
+description: How to run and write up an investigation (train) in the recruit repo — from a question to a filled-out catalogue under analysis/ or a note under docs/sessions/. Load on "research X", "figure out why", "look into X and write it up", "look into X", when starting an investigation into data/pipeline, when writing up findings, when adding to an existing analysis. Accounts for the project's core constraint — the agent has no access to Postgres; all measurements go through ops/check scripts that the owner runs.
+---
+
+# Research train in recruit
+
+A *train* is one investigation carried from question to a filled-in answer.
+The output is not a document but a **catalogue** of artifacts aimed at
+different readers. Getting the right set of artifact kinds matters more than
+polishing any single file.
+
+| artifact | answers | reader |
+|---|---|---|
+| `README.md` | "what is this and should I read it?" | someone browsing `analysis/` |
+| `SUMMARY.md` | "what did we learn?" | someone who needs the model once |
+| `INDEX.md` | "where is the fact I need?" | someone who already has the model |
+| `organized-notes/NN-topic.md` | a verified detail, with citations | someone who will act on it |
+| `messy-notes/topic.md` | raw findings, provenance | someone who suspects a fact got lost |
+
+Plus `tools/` — scripts belonging only to this investigation, and `data/` —
+their output.
+
+## Where trains live
+
+- **Full catalogue** — `analysis/<kebab-name>/`. Precedent:
+  `analysis/domain_structure/` (phase scripts + JSON output side by side;
+  there's no README there — that gap is a hole new trains should not repeat).
+- **Small train** — a single note `docs/sessions/SESSION_YYYY_MM_DD_TOPIC.md`,
+  in the style of `SESSION_SUMMARY_2026_08_25_OUTREACH_SELECTION.md`: it
+  merges SUMMARY and INDEX in one file. Promote it to a full catalogue once
+  the note starts having to choose what to leave out.
+- **Closed train** → moves to `docs/archive/` in full (per `docs/README.md`'s
+  rule: a dated, closed document moves to the archive — kept as history,
+  but out of the way).
+
+## Pipeline
+
+**1. Fan-out — via subagents, in parallel.** Split the question into
+non-overlapping topics, one collector per topic; run them in parallel
+whenever subagents are available. Each writes a long raw note to
+`messy-notes/<topic>.md`. Length is a virtue here; completeness matters more
+than polish. A raw note is allowed to be wrong — that's what curation is
+for — but it must be *specific*: file:line and command output, so a wrong
+claim gets caught rather than merely doubted.
+
+Constraints of this repo that fan-out must respect:
+
+- the code lives on the owner's Mac and is only reachable via `device_bash`
+  (`$HOME/mnt/recruit`); the cloud Bash cannot see the repo at all;
+- **never query Postgres from the sandbox** (CLAUDE.md) — neither the agent
+  nor any subagent; all data access goes through the "Measurement" step
+  below;
+- curation stays with one person: many collectors, but a single writer of
+  organized-notes.
+
+**2. Measurement — an async loop through the owner.** The agent cannot run
+a query against the database itself. So every measurement is a read-only
+script `ops/check/<name>.command`, which **the owner runs**, and the output
+is pasted back into the chat and dropped into `messy-notes/` verbatim. The
+loop: write the script → owner runs it → output goes into the note → next
+cut. The script must print not just numbers but also **how to read them**
+(a "what to look at" / "how to read this" block in the header or the
+output) — a human without the agent's context is the one reading it.
+
+**3. Cut before mechanism.** Reading the code and finding a plausible
+mechanism is a hypothesis, not a diagnosis: the mechanism can be real and
+still explain only 8% of the problem (that's how two hypotheses died in a
+row on 28.08 — the crawler's mute path, then the template extractor). The
+order is mandatory: first a cut script across several dimensions at once
+(source, extractor, month, role…) — wherever the share deviates from the
+overall rate, that's where the cause is; only check a mechanism afterward,
+and only with **kill predictions**: "if the hypothesis is true, the data
+must show X, otherwise it's false" — and print the prediction's failure
+loudly rather than rationalize it away.
+
+**4. Curate.** Read all the raw notes yourself and rewrite what survives
+into `organized-notes/NN-topic.md`, numbered in reading order. Curation is
+not a summary: contradictions get resolved by going back to the source,
+unverified claims get dropped, and a finding two collectors reached
+independently gets merged. **Every discrepancy you resolve gets named in
+`INDEX.md` §Status** — that's the contract that makes messy-notes safe to
+keep around: without it, the reader has no way to know which raw claims
+were actually checked.
+
+**5. SUMMARY.md — last.** This is a model, not a recap: the problem, the
+root cause *and how it was established*, the cost, options in a ranked
+table, a recommendation, and — the thing most often skipped — **the
+decision that is actually in front of the owner**, phrased as a decision.
+If the investigation closed that decision, say so and say why.
+
+**6. INDEX.md — a routing table:** `| file | answers |`, one row per
+organized note, phrased from the reader's point of view ("full contract for
+Telegram rate limits", not "notes about limits"). Plus a "Question → where
+to look" section with the actual questions people will show up with. Link
+to neighboring trains.
+
+## Rules that make notes worth keeping
+
+- **Every number carries the date it was measured and the recount command.**
+  House rule of the project (CLAUDE.md): "a number without a date is a lie;
+  with a date, it's evidence. Recount with the command, don't trust the
+  document." Form:
+  `53.6% (measured 28.08, recount with zsh ops/check/record_density.command)`.
+- **Every load-bearing claim carries a tag**: `verified` / `from memory` /
+  `inferred`, inline. For claims about code, use the AGENT_RULES §11
+  triad — **exists ≠ wired up ≠ deployed** — and the tag says which of
+  the three states was actually checked. "From memory" is an instruction
+  to go verify it, not something that can stay in organized-notes as is.
+- **A cheap falsifier before writing down a claim.** If a grep, a single
+  command, or one run settles the question, the note gets the result, not
+  the reasoning it would have replaced (AGENT_RULES §2: runs find what
+  reading can't; §1: before SQL, run `zsh ops/check/verify_sql.command`,
+  keeping in mind it doesn't scan `.command` files — check their SQL
+  against the models by hand).
+- **Record negative results.** A dead hypothesis is the most expensive
+  thing in a train to re-derive and the easiest to lose. Name it, name the
+  cause of death, and name the measurement that killed it (example:
+  `SESSION_2026_08_27_MONITORING_PANEL.md` §4e: two dead hypotheses named
+  explicitly, so the next investigation doesn't re-chase them).
+- **Enumerate, don't sample, inside a survey.** A note surveying a set —
+  flags, columns, scripts, roles — lists *every* item with a verdict. A
+  sample can't structurally prove nothing was missed. Unimportant items go
+  into an appendix table, but not into nowhere.
+- **Full-spec detail is the standard for organized-notes.** A verified note
+  is detailed enough that the core ideas can be implemented from that one
+  document alone — only small nuances are missing. Test: could the next
+  agent pick up or continue the work without re-digging through the chat?
+- **Status banners get a date, not a rewrite.** When reality has moved past
+  a document, don't rewrite it into a lie — add a dated banner at the top
+  (`⚠ Update DD.MM HH:MM`, as in NEXT_SESSION_QUEUE) naming which sections
+  describe the past; leave the rest alone.
+- **Scripts go into the train's `tools/` OR into `ops/check/`, deliberately.**
+  A script placed in `ops/check/` enters the registry (needs a header
+  banner `# name.command — description`, or
+  `test_every_ops_script_has_a_header` fails) and, if classified
+  `read_only`, becomes runnable from the "System" panel. A one-off script
+  goes into the train's `tools/`, its output into `data/`, and the note
+  cites both. Traps: a file created through the bridge needs `chmod +x`;
+  inside a `.command` file it's zsh (`\b` in a Postgres regex means
+  BACKSPACE, a glob with no match aborts the command, `read -k` fails
+  under bash) — AGENT_RULES §9.
+
+## Oddities — to the owner, as their own section
+
+Anything non-obvious found along the way — logic that looks like a bug but
+might be a deliberate decision — **is never silently normalized and never
+silently fixed**. Every oddity gets recorded in `SUMMARY.md` under an
+"Oddities" section: the observation (with file:line or a measurement) plus
+a direct question to the owner, "is this intended or not?" The owner
+decides; the verdict gets appended to the item. Examples of the genre:
+`run_extract_vacancy.command` is byte-identical to
+`run_extract_candidate.command` (matching md5 — vacancy extraction has
+never actually been run); `check_invalid_fields.command` writes to the
+database from a supposedly read-only diagnostics folder; the mask covering
+699 tools is identical across every role. Each of these facts would have
+been "fixed" incorrectly without asking the owner first.
+
+## Formatting — house style
+
+All artifacts are written in Russian (except identifiers and paths). Note
+H1: `# <topic phrase with the outcome> — DD.MM.YYYY`. The preamble is a
+blockquote: **Trigger** (what started the train, linking to the queue/
+complaint), method and how it was checked ("verified by a run, not by
+reading — AGENT_RULES §2"), **Rig** (script/harness, path, run time), and a
+line about the numbers ("Numbers — measured DD.MM on a snapshot from
+DD.MM…"). Numbers use thousands separators (`89 588`), deltas are written
+`Δndcg −0.006`, dates in prose are `DD.MM` when the year is obvious.
+
+## README.md — frontmatter
+
+```yaml
+---
+kind: analysis
+status: live | paused | finished | closed | superseded
+updated: YYYY-MM-DD          # absolute dates only
+start: SUMMARY.md            # the one file to open first
+subject: subsystem · git-hash-of-measurement   # prod = code on disk; hash, not a branch
+next: none | one sentence on what will resume the train
+---
+```
+
+Then two paragraphs: why the train happened, how it ended, where to start
+reading. There's no frontmatter validator in this project (unlike the
+source workspace with its `status.py`) — discoverability instead relies on
+`docs/README.md`: a new train gets registered there in the navigation in
+the same session it's created.
+
+## Worked example
+
+The 28.08 train, "why 53.6% of open vacancies have no requirements"
+(written up in `SESSION_2026_08_27_MONITORING_PANEL.md` §4a–4e): five
+read-only scripts (`record_density` → `requirements_gap_provenance` →
+`template_pass_audit` → `empty_requirements_cuts` → `extract_dryrun`), each
+run by the owner; two hypotheses killed by predictions and named
+explicitly; the cuts narrowed it down to two regressions; a run found the
+root cause (a 12k-token prompt against the local model's context window),
+and the fix was verified by that same script before the result was written
+down. This is the reference case for the "script → owner → output → next
+cut" loop.

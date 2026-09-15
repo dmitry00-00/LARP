@@ -1,0 +1,446 @@
+# Recruiting Intelligence System — CLAUDE.md
+
+> Последнее обновление: **11 августа 2026**. Адресат — агент в начале сессии.
+>
+> Читать вместе с `docs/AGENT_RULES.md` (**как** работать; 14 правил, каждое
+> написано по следам конкретной ошибки с ценой). Здесь — **как устроено**.
+>
+> Числа в этом файле помечены датой замера. Система живая: число без даты —
+> враньё, а число с датой — свидетельство. Пересчитывать командой, а не
+> доверять документу.
+
+---
+
+## Первые пять минут сессии
+
+1. `docs/AGENT_RULES.md` — 14 правил. Все написаны после того, как их нарушили.
+2. Свежий `docs/NEXT_SESSION_QUEUE_*.md` (по дате в имени) — что в работе.
+3. `git status` — в проекте бывает большой хвост незакоммиченного; **коммитит
+   владелец сам** (AGENT_RULES §10).
+4. Перед любым новым SQL: `zsh ops/check/verify_sql.command <файл>.py`.
+
+**Прод — это код на диске.** Демоны поднимают новый процесс на каждый прогон,
+отдельного деплоя нет. Исключения: `openclaw_loop.sh` (нужен рестарт демона),
+бэкенд и боты (launchd-сервисы, см. «Прод и сервисы»).
+
+---
+
+## Что это за проект
+
+Система автоматизированного рекрутинга: скрапер Telegram-каналов → LLM-разбор
+резюме и вакансий → матчинг → работа с людьми через ботов и веб.
+
+**Стадия: production на Mac Mini**, нативно через launchctl (не Docker).
+
+Объёмы (замер 04.07.2026, пересчитать — `zsh ops/check/check_db.command`):
+~427k кандидатов, ~185k вакансий, 427k эмбеддингов, 331k профилей Habr в
+отдельной таблице. Воркспейс `5e048bf7` — единственный боевой.
+
+---
+
+## Архитектура
+
+```
+                      ┌──────────────────────────────────────┐
+   Telegram MTProto ──┤                                      │
+   t.me/s/ (веб)    ──┤   OpenClaw          apps/openclaw    │
+   Сайты компаний   ──┤   приём + LLM-разбор                 │
+   Telegra.ph       ──┤                                      │
+                      └───────────────┬──────────────────────┘
+                                      │ HTTP  X-Recruit-Api-Key
+                                      │ или прямо в БД (clients/direct.py)
+                                      ▼
+   ┌──────────────┐        ┌────────────────────────┐
+   │ 3 Telegram-  │◄──────►│  Backend  FastAPI      │
+   │ бота         │        │  apps/backend          │
+   │ admin·junior │        │  37 роутеров           │
+   │ ·senior      │        │  60 сервисов           │
+   └──────────────┘        └───────────┬────────────┘
+                                       │ PostgreSQL 16 · 60 таблиц
+                                       ▼
+                           ┌────────────────────────┐
+                           │  Frontend  React SPA   │
+                           │  src/  · 20 экранов    │
+                           └────────────────────────┘
+```
+
+Схемы подробнее — `docs/ARCHITECTURE_DIAGRAMS.md` (Mermaid).
+Фактические таблицы — `docs/SCHEMA.md` (генерируется из моделей).
+
+---
+
+## Приём данных и сохранность источника
+
+**Самое важное, что выяснилось 11.08:** источники смертны. Каналы удаляют,
+админы затирают файлы. Полная карта — `docs/DATA_SOURCES.md`, здесь суть:
+
+| Слой | Переживает смерть канала |
+|---|---|
+| `inbox_items.raw_text` | **да** — это архив, из него всё пересобирается |
+| текст из вложения | да, если вложение успели скачать |
+| **байты вложения** | **нет** — файл не сохраняется никогда |
+| разобранные сущности | да, и пересобираемы |
+
+Три способа потерять пост целиком: не успели обойти до смерти канала;
+вложение старше `WATCH_ATTACHMENT_MAX_AGE_DAYS` (14 дн.) — не качаем;
+пост без текста и без поддерживаемого документа — пропускаем (скриншот
+резюме сюда попадает, распознавания изображений нет).
+
+**Следствие:** ошибку разбора можно переиграть по `raw_text`, ошибку обхода —
+нельзя. Отставание обхода = размер безвозвратной потери.
+
+### Конвейер
+
+```
+watch / watch_web   → inbox_items (status='raw', raw_text всегда)
+classify_post       → LLM: vacancy / resume / career_advice / other
+  ├ dedup           → skipped, extraction_meta.skip_reason='duplicate'
+  └ topic_gate      → skipped, skip_reason='off_topic'   ⚠ завышает IT
+extract_vacancy     → classified_as='vacancy'  → Vacancy + VacancyRequirement
+extract_candidate   → classified_as='resume'   → Candidate + WorkEntry + Tools
+```
+
+Оба гейта **помечают**, а не удаляют: отсев обратим.
+
+Ручное добавление (`app/bots/routers/intake.py`) входит **после**
+классификации: `status='classified'` сразу — человек уже решил, и гейты для
+него вредны.
+
+---
+
+## Контроль лимитов Telegram
+
+Появился 08–09.08 после цикла банов. Разбор — `docs/TELEGRAM_RATE_LIMITS_ANALYSIS.md`.
+
+**Суть проблемы:** аккаунт был единственным измерительным прибором. Узнать,
+что мы близко к лимиту, можно было только словив FloodWait, то есть потеряв
+сутки.
+
+| Модуль | Что делает |
+|---|---|
+| `openclaw/telemetry.py` | `ApiMeter`: счётчик обращений по типам, мягкие/жёсткие флуды, самокалибрующийся потолок, токен-ковш, адаптивный темп |
+| `openclaw/sidefiles.py` | файлы состояния рядом с БД; суффиксы под несколько аккаунтов |
+| `openclaw/accounts.py` | взвешенный детерминированный шард каналов по md5(handle) |
+| `openclaw/clients/tg_web.py` | чтение `t.me/s/` — **вне квоты** |
+| `openclaw/skills/watch_web.py` | веб-транспорт как скилл |
+
+Ключевое, что легко сломать:
+
+* предупреждения Telethon перехватываются через логгер `telethon.client.users`
+  — иначе `flood_sleep_threshold=60` глотает их молча;
+* ковш `< 0` — это **долг**, а не «не инициализирован». Сброс на полную
+  ёмкость при отрицательном значении сводил обход к 1 каналу за прогон;
+* ёмкость ковша обязана быть **не меньше одного полного прогона**, иначе
+  полный прогон невозможен в принципе;
+* накладные на подключение (GetUsers/GetState/GetDifference) — по одному
+  комплекту на прогон, даже если обошли ноль каналов. При частом цикле это
+  съедало половину дневного бюджета.
+
+Проверка: `zsh ops/check/watch_state.command`.
+
+---
+
+## Матчинг
+
+Три поколения, все три живы в коде:
+
+1. **Tool-based** (`services/matching.py`) — `WorkEntry[]` против
+   `VacancyRequirement[]`, исходы `matched` / `gap` / `extra`.
+2. **Гибрид** (`services/hybrid_score.py`) — `tools·0.5 + emb·0.3 + salary·0.2`
+   по умолчанию; **в проде откалибровано `0.85 / 0 / 0.15`**, эмбеддинги вне
+   скора.
+3. **LTR** (`services/ranker.py`) — обучаемый ранкер на 14 структурных фичах.
+   **В проде**: `match_scores.py:162` считает, `ltr_score` (миграция 0050)
+   хранит, сортировка идёт `ltr_score DESC NULLS LAST` и только потом по
+   `score_min`.
+
+Почему так. Accuracy-эвал (04–10.07, 46 вакансий / 827 размеченных пар,
+ndcg@10): tools **0.740** ≈ hybrid 0.737 ≫ lexical 0.712 ≫ BGE-M3 0.590 ≫
+MiniLM 0.479. Эмбеддинги в гибриде прироста над tools не дают, лексика
+сильнее эмбеддингов, RRF(tools, проза) **хуже** tools. Потолок был не в
+tools, а в **ручном взвешивании**: ридж на тех же данных дал **0.833**
+(Δ+0.094, p=0.001). Отсюда LTR в проде, а `retrieval.py` — только ради
+recall и поиска, не ранжирования.
+
+**Историческая ловушка (закрыта 29.06):** массовый импорт клал кандидатов без
+`WorkEntryTool`, и матчер видел их как 0. Покрытие 35→63.4%. Кандидат без
+инструментов для матчера **не существует** — это до сих пор главный признак
+тихой потери, и его проверяют `ops/check/manual_intake.command` и
+`candidate_pool.py`. Хроника — `docs/MATCHING_DEGENERACY_FINDINGS.md`.
+
+---
+
+## Боты — три, у каждого свой процесс
+
+| Бот | Kind | Сервис | Для кого |
+|---|---|---|---|
+| @my_personal_kabanchick_bot | `admin` | `com.recruit.bot.admin` | Бэк-офис: `/vacancies`, `/candidates`, `/pipeline`, ручной приём |
+| @headhunt_it_bot | `junior` | `com.recruit.bot.junior` | Соискатели: резюме файлом, `/jobs`, `/digest`, `/claim` |
+| @headhunt_it_pro_bot | `senior` | `com.recruit.bot.senior` | Middle+: `/worth`, сигналы, подписка фильтрами (0053) |
+
+Роутеры — `app/bots/routers/`, сборка — `app/bots/dispatcher.py:build_dispatcher(kind)`.
+**Роутеры — модульные синглтоны:** в одном процессе можно собрать только один
+диспетчер, второй вызов падает `Router is already attached`.
+
+**Рестарт бота ≠ рестарт бэкенда.** Боты крутятся отдельными процессами
+polling (`app/cli/bot.py`):
+
+```bash
+launchctl stop com.recruit.bot.admin && launchctl start com.recruit.bot.admin
+tail -20 ~/Library/Logs/recruit-bot-admin.log
+zsh ops/check/bot_doctor.command
+```
+
+Ловушки aiogram, которые уже стоили прогонов: **64 байта** на `callback_data`
+(UUID уже 36 — коду типа остаётся мало); незаэкранированный Markdown роняет
+сообщение **целиком**; порядок роутеров важен — широкие фильтры (`F.document`,
+`F.forward_origin`, кнопки) идут **последними**, иначе перехватывают команды и
+FSM.
+
+---
+
+## Аутрич — от лида до касания
+
+Собран 10–11.08. План — `docs/CANDIDATE_POOL_PLAN.md`.
+
+| Шаг | Чем |
+|---|---|
+| контакты работодателей из `raw_text` | `scripts/employer_contacts.py` |
+| пул достижимых кандидатов | `scripts/candidate_pool.py` |
+| разбор рынка под кандидата + черновик письма | `scripts/candidate_verdict.py` |
+| витрина (самодостаточный HTML) | `scripts/leads_to_html.py` |
+| **всё одной командой** | `zsh ops/check/leads_refresh.command` |
+| журнал касаний | `outreach_touches` (0057), `ops/check/outreach_log.command` |
+
+Достижимый кандидат = свежий пост (`published_at`, 0054) **и** контакт
+(`telegram_handle` или `email`) **и** хоть один инструмент. Три условия взяты
+слово в слово из замера `candidate_liveness.py` — иначе выгрузка и отчёт
+разошлись бы, и было бы неясно, какое число верное.
+
+---
+
+## Стек
+
+**Backend** (`apps/backend/`): FastAPI 0.115 · SQLAlchemy 2.0 async · Alembic
+(head **0063**) · PostgreSQL 16 · Redis (опц.) · DeepSeek для экстракции ·
+LM Studio/Gemma для онтологии и ассистента · Prometheus · Sentry · JWT +
+Google OAuth · aiogram 3.28 · Celery (Beat в проде **не идёт** — см.
+`docs/SCHEDULED_JOBS_AUDIT.md`).
+
+**OpenClaw** (`apps/openclaw/`): Telethon 1.43 · SQLite-стейт · DeepSeek ·
+CLI `openclaw`. Отдельный venv — с бэкендом **не общий**.
+
+**Frontend** (`src/`): React 19 · TS 5.9 · Vite 6 · Zustand 5 · React Router 7 ·
+react-query + ky · Recharts · dnd-kit · CSS Modules · Dexie (legacy, мигрирует).
+
+---
+
+## Команды
+
+```bash
+# ── прод (Mac Mini) ────────────────────────────────────────────
+bash ops/restart_backend.command          # + alembic upgrade head + /health
+launchctl {start,stop} com.recruit.openclaw
+launchctl {start,stop} com.recruit.bot.{admin,junior,senior}
+curl http://localhost:8000/health
+
+# ── backend ────────────────────────────────────────────────────
+cd apps/backend && source .venv/bin/activate
+alembic upgrade head
+uvicorn app.main:app --reload
+pytest -q                                 # in-memory SQLite, Postgres не нужен
+ruff check app tests
+python scripts/verify_sql_columns.py <файл>.py     # страж колонок
+python scripts/dump_schema_doc.py                  # перегенерировать SCHEMA.md
+
+# ── openclaw ───────────────────────────────────────────────────
+cd apps/openclaw && source .venv/bin/activate
+openclaw run-once {watch,watch_web,classify,extract_vacancy,extract_candidate}
+openclaw run-once watch --account b       # второй аккаунт
+openclaw stats [--days 1]
+
+# ── frontend ───────────────────────────────────────────────────
+npm run dev | build | lint | test | test:e2e
+npm run gen:openapi && npm run gen:types  # ОБЯЗАТЕЛЬНО после правок схемы
+```
+
+**Ops-скрипты** — `ops/`, двойным кликом из Finder или через `zsh`:
+`check/` (95, диагностика) · `pipeline/` (42, прогоны) · `channels/` (16) ·
+`data/` (27, импорт) · `setup/` (26).
+
+---
+
+## Карта кода
+
+### Backend `apps/backend/app/`
+
+```
+main.py            FastAPI + CORS + middleware + /health + /metrics
+domain.py          общие enum: PositionCategory (вкл. 'ml'), Grade, Currency…
+core/              config · db (engine + engine_ro) · security · cache
+                   metrics · drain · middleware
+models/            60 таблиц. Группировка и колонки — docs/SCHEMA.md
+services/          60 модулей. Ключевые:
+    matching · hybrid_score · ranker (LTR) · match_scores
+    ingest        приём от OpenClaw, _post_published_at
+    resume_extract · llm · retrieval · search
+    fx            курсы + нормализация зарплат
+    claim         присвоение профиля по нику
+    channel_geo · channel_scoring · post_topic · tech_detect
+    warm_outreach · habr_outreach · contacts
+api/v1/            37 роутеров (candidates, vacancies, match, ingest, …)
+bots/              dispatcher + 18 роутеров + cli/bot.py (polling)
+tasks/             match · matviews · embeddings · retention (только audit)
+```
+
+### OpenClaw `apps/openclaw/openclaw/`
+
+```
+cli.py · config.py · state.py (SQLite)
+telemetry.py · sidefiles.py · accounts.py     ← контроль лимитов
+clients/    telegram (MTProto) · tg_web (t.me/s/) · telegraph
+            llm · recruit (HTTP) · direct (прямо в БД) · factory
+skills/     watch_channels · watch_web · stream_channels
+            classify_post · regex_prefilter · topic_gate · dedup
+            extract_vacancy · extract_candidate · extract_market_signal
+            template_extractor · ner_extractor · salary
+            discover_channels · discover_tgstat · discover_keyword_search
+            check_dead_channels · score_channels · probe_links
+            scrape_company_sites · consolidate_shadow
+prompts/    LLM-промпты (обычные и hybrid-версии)
+```
+
+### Frontend `src/`
+
+```
+api/          ky + react-query + generated.ts (openapi-typescript)
+components/   TopNav · TreePicker · Spine/Tablet · KanbanBoard
+              RoadMap · DomainRadar · SalaryChart · ToolIcon · ui/
+pages/        Dashboard Vacancies Candidates Positions Tools Pipeline
+              Compare RoleSheet Builder Library Career Graph AtsExport
+              Hub Org MarketSignals SkillMap Assistant RecruiterDashboard Admin
+stores/       Zustand (filterStore и др.)
+utils/        toolTreeHelpers · matchScore · aggregateCandidate · computeRoadmap
+```
+
+---
+
+## Ключевые концепции
+
+**Позиции и маски.** У каждой `Position` есть `PositionMask` с
+`canonical_skills` — словарь ~467 инструментов с алиасами. По нему LLM
+маппит упомянутые навыки на наши id. Добавили позицию — обязательно
+`scripts/populate_mask_skills.py`, иначе маска пустая и инструменты не
+извлекаются (так уже терялись 3k кандидатов).
+
+**Дерево инструментов.** Категория → подкатегория (→ группа) → инструмент,
+плюс суб-инструменты через `parent_tool_id`. Домены: `dev`, `design`,
+`analysis`, `qa`, `infosec`, `devops`, `misc`. Сервер — источник истины,
+localStorage — кэш. Мутировать только через `toolTreeHelpers.ts`.
+
+**Зарплатная нормализация (0039).** Родная валюта + два базовых поля
+(RUB, USD). Якорь — `currency_rates.usd_per`, фетч раз в час, статический
+фолбэк работает без сети. Парсер правил («от»/«до», «к»/«тыс», gross/net,
+период) — `openclaw/skills/salary.py`, один на всех экстракторов.
+
+**Provenance (0048).** Откуда запись пришла — нужно, чтобы отличать bulk-импорт
+от живой ленты при замерах.
+
+**Ось ответственности.** Компетенции как сущности дерева, `one_of_*` группы —
+взаимозаменяемые требования («React ИЛИ Vue»), см. `models/ontology.py`.
+
+---
+
+## Ловушки, которые уже стоили прогонов
+
+| Ловушка | Как выглядит | Правда |
+|---|---|---|
+| `vacancies.title` | кажется очевидной | колонки нет: `company_name + position_id + grade` |
+| `candidates.grade` | грейд же у человека | грейд — свойство **места работы**, `work_entries.grade` |
+| `imported_kind='resume'` | симметрично `classified_as` | у кандидата это `'candidate'`; `'resume'` живёт в `classified_as` |
+| `telegram_handle` | чистый ник | хранится **С собакой** и в нижнем регистре; посты-сторона хранит как пришло (`workmasterIT`) → сравнивать только `lower(ltrim(handle,'@'))`. 29.08 exact-join родил фантомную «дыру реестра» |
+| `created_at` в модели | не видно в файле | приходит из `TimestampMixin` |
+| `\b` в Postgres regex | граница слова | это BACKSPACE. Граница — `\m` / `\M` |
+| глоб в zsh при `nomatch` | раскроется в пустоту | **роняет команду** → использовать `find` |
+| `$HOME` в `.env` | раскроется шеллом | не раскроется: создаст каталог с именем `$HOME` |
+| `read -k` | обычный read | zsh-изм, падает под bash (агент запускает через bash) |
+| круглое число в отчёте | результат | почти всегда `LIMIT` или константа из кода |
+| `Tool.status='candidate'` | «черновик, можно фильтровать» | редакторская метка, НИКЕМ не читается; в candidate сидит мейнстрим (Redux Toolkit, ESLint…) — фильтр «только active» повторит регрессию 06.2026. Повышение: `scripts/promote_candidate_tools.py` |
+
+Страж от первых пяти: `zsh ops/check/verify_sql.command <файл>.py` — сверяет
+пары «таблица→колонка» по метаданным SQLAlchemy, база не нужна, секунда.
+**Свою проверку не писать** — эта уже есть и умнее (AGENT_RULES §6).
+
+**Журнал массовых правок (заведён 29.08).** Дважды за месяц массовая правка
+прошла без следа (15.08 — 46 354 вакансии, 29.08 — 47 497; обе — 
+`backfill_salary_base --recompute`). Теперь любой оператор от 500 строк и
+поштучные циклы такого объёма пишутся в `analysis/mutations/YYYY-MM.jsonl`:
+крючок на классе Engine (`app/core/mutation_audit.py`) ловит все движки
+процесса, скрипты могут писать смысл правки сами (`ops/lib/mutation_journal.py`).
+Читать: `zsh ops/check/mutation_log.command`. Вопрос «что переписало N строк»
+сначала задавать журналу; если журнал пуст — `mass_mutation_forensics.command`
+восстанавливает виновника по форме тронутого множества, пока строки свежие.
+Пустой журнал ≠ «правок не было»: psql/pgAdmin мимо SQLAlchemy он не видит.
+Помнить: `updated_at` — НЕ история; каждый recompute стирает след предыдущего.
+
+---
+
+## Правила работы с кодом
+
+1. **Типы фронта** — `src/entities/index.ts`, не дублировать в компонентах.
+2. **Данные фронта** — через Zustand; прямые вызовы Dexie только внутри stores.
+3. **Дерево** — только через `toolTreeHelpers.ts`.
+4. **CSS Modules**, без inline-стилей без нужды.
+5. **Spine/Tablet** — паттерн списков и карточек.
+6. **TreePicker** — новый режим через `mode`, не новый компонент.
+7. **Матчинг** — только в `matchScore.ts` (фронт) / `services/matching.py` (бэк).
+8. **Новая позиция** → `populate_mask_skills.py`.
+9. **Бэкенд** — эндпоинты в `api/v1/`, логика в `services/`, не в роутерах.
+10. **PositionCategory** — добавлять в `domain.py` **И** в `src/entities/index.ts`.
+11. **Миграции с INSERT** — перечислять все NOT NULL явно (в `positions` это
+    `grades` и `required_categories` как `'[]'::json`).
+12. **После правок схемы** — `npm run gen:openapi && npm run gen:types`.
+13. **SCHEMA.md руками не править** — генерируется `dump_schema_doc.py`.
+
+Чего нельзя без спроса (AGENT_RULES §10): коммитить · писать секреты в файлы ·
+запускать тяжёлое на проде (`full_recompute`, массовые `--apply`) · расширять
+домен ради разовой задачи.
+
+---
+
+## Прод и сервисы
+
+| Сервис | Что |
+|---|---|
+| `com.recruit.backend` | uvicorn :8000 |
+| `com.recruit.frontend` | статика SPA |
+| `com.recruit.openclaw` | цикл `watch → classify → extract_vacancy → extract_candidate`, интервал `WATCH_INTERVAL_SEC` (300) |
+| `com.recruit.bot.{admin,junior,senior}` | три бота, отдельные процессы polling |
+| `com.recruit.scheduler` | недельный дайджест, чистка логов |
+| `com.recruit.snapshot` | `metric_snapshots` — тренды |
+| `com.recruit.backup` / `.verify` | бэкапы и их проверка |
+| `com.recruit.vitals` / `.digest` | ежедневные витали |
+| `com.recruit.retrain` | переобучение ранкера |
+
+Postgres — Postgres.app, порт 5432. **Из песочницы агента в базу не ходить:**
+`DATABASE_URL` — asyncpg-URL и его в окружении нет; образец подключения —
+`ops/check/disk_report.command`.
+
+---
+
+## Документация
+
+Навигация по `docs/` — **`docs/README.md`**. Опорные:
+
+| Файл | О чём |
+|---|---|
+| `AGENT_RULES.md` | как работать. Читать первым |
+| `DATA_SOURCES.md` | откуда данные и что переживает смерть источника |
+| `SCHEMA.md` | фактические 60 таблиц (генерируется) |
+| `ARCHITECTURE_DIAGRAMS.md` | Mermaid-схемы компонентов и потоков |
+| `TELEGRAM_RATE_LIMITS_ANALYSIS.md` | почему бюджет обращений устроен так |
+| `DATA_ROADMAP.md` | качество собранного: D1–D3 |
+| `MATCHING_DEGENERACY_FINDINGS.md` | как матчер был вырожден и чем вылечен |
+| `CANDIDATE_POOL_PLAN.md` | стратегия «сначала пул кандидатов» |
+| `OPERATIONS.md`, `RUNBOOK.md` | эксплуатация |
+| `sessions/`, `archive/` | история: саммари сессий и закрытые передачи |

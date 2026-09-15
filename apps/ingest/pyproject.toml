@@ -1,0 +1,22 @@
+[project]
+name = "hmb-ingest"
+version = "0.1.0"
+description = "HMB-Market: приём, нормализация и экспорт фида (собрано 15.09.2026 поверх kernel/)"
+requires-python = ">=3.11"
+dependencies = ["hmb-kernel", "sqlalchemy>=2.0", "httpx>=0.27", "structlog>=24", "selectolax>=0.3"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["hmb*"]
+
+[tool.setuptools.package-data]
+hmb = ["seeds/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

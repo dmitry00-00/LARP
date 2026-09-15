@@ -1,0 +1,2801 @@
+{
+ "_meta": {
+  "version": 8,
+  "date": "2026-09-15",
+  "note": "Словарь слотов под ЛАРП. Каркас классов оружия — из регламентов (Warhammer LARP, Адвентура, Empire), названия — из номенклатуры магазинов поезда analysis/larp-sources-2026-09. Алиасы по языкам: ru · en · de · nl · kk. Число без замера — гипотеза: покрытие меряется `hmb slots-coverage` после каждого посева.",
+  "groups": [
+   "weapon",
+   "shield",
+   "ranged",
+   "armour",
+   "clothing",
+   "accessory",
+   "camp",
+   "sfx",
+   "supplies"
+  ]
+ },
+ "slots": [
+  {
+   "id": "sword_1h",
+   "group": "weapon",
+   "ru": "Меч одноручный",
+   "en": "One-handed sword",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "меч",
+     "одноручный меч",
+     "полуторный меч",
+     "полуторник",
+     "бастард",
+     "гладиус",
+     "скимитар",
+     "сабля",
+     "ятаган",
+     "палаш",
+     "шпага",
+     "рапира",
+     "фальшион",
+     "катана",
+     "вакидзаси",
+     "реплика меча",
+     "меч ларп",
+     "ларп меч",
+     "тренировочный меч",
+     "текстолитовый меч"
+    ],
+    "en": [
+     "sword",
+     "one-handed sword",
+     "one handed sword",
+     "single-handed sword",
+     "short sword",
+     "medium sword",
+     "long sword",
+     "longsword",
+     "bastard sword",
+     "arming sword",
+     "gladius",
+     "scimitar",
+     "sabre",
+     "saber",
+     "falchion",
+     "rapier",
+     "katana",
+     "wakizashi",
+     "curved blade",
+     "viking sword",
+     "cutlass",
+     "machete",
+     "broadsword"
+    ],
+    "de": [
+     "schwert",
+     "einhandschwert",
+     "einhänder",
+     "kurzschwert",
+     "langschwert",
+     "bastardschwert",
+     "säbel",
+     "krummsäbel",
+     "falchion",
+     "rapier",
+     "katana",
+     "wikingerschwert",
+     "polsterschwert",
+     "larp schwert",
+     "larp-schwert",
+     "schwerter",
+     "larp schwerter",
+     "polsterschwerter"
+    ],
+    "nl": [
+     "zwaard",
+     "eenhandig zwaard",
+     "kort zwaard",
+     "langzwaard",
+     "sabel",
+     "kromzwaard",
+     "katana",
+     "larp zwaard"
+    ]
+   }
+  },
+  {
+   "id": "sword_2h",
+   "group": "weapon",
+   "ru": "Меч двуручный",
+   "en": "Two-handed sword",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "двуручный меч",
+     "двуручник",
+     "цвайхандер",
+     "клеймор",
+     "фламберг",
+     "эспадон",
+     "нодати",
+     "тати",
+     "великий меч"
+    ],
+    "en": [
+     "two-handed sword",
+     "two handed sword",
+     "greatsword",
+     "great sword",
+     "zweihander",
+     "claymore",
+     "flamberge",
+     "nodachi",
+     "war sword"
+    ],
+    "de": [
+     "zweihänder",
+     "zweihandschwert",
+     "bidenhänder",
+     "flamberge",
+     "claymore",
+     "großschwert"
+    ],
+    "nl": [
+     "tweehandig zwaard",
+     "tweehander",
+     "claymore"
+    ]
+   }
+  },
+  {
+   "id": "dagger",
+   "group": "weapon",
+   "ru": "Кинжал",
+   "en": "Dagger",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "кинжал",
+     "нож",
+     "стилет",
+     "дага",
+     "мизерикорд",
+     "танто",
+     "кукри",
+     "крис",
+     "нож ларп",
+     "нож мясника"
+    ],
+    "en": [
+     "dagger",
+     "knife",
+     "stiletto",
+     "dirk",
+     "parrying dagger",
+     "main gauche",
+     "tanto",
+     "kukri",
+     "kris",
+     "seax"
+    ],
+    "de": [
+     "dolch",
+     "messer",
+     "stilett",
+     "parierdolch",
+     "sax",
+     "larp dolch",
+     "dolche"
+    ],
+    "nl": [
+     "dolk",
+     "mes",
+     "stilet"
+    ]
+   }
+  },
+  {
+   "id": "axe",
+   "group": "weapon",
+   "ru": "Топор",
+   "en": "Axe",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "топор",
+     "секира",
+     "бердыш",
+     "томагавк",
+     "чекан",
+     "клевец",
+     "боевой топор",
+     "двуручный топор",
+     "ручной топор",
+     "топор ларп",
+     "ларп топор",
+     "топор бытовой"
+    ],
+    "en": [
+     "axe",
+     "battle axe",
+     "battleaxe",
+     "war axe",
+     "hand axe",
+     "two-handed axe",
+     "double axe",
+     "bearded axe",
+     "tomahawk",
+     "hatchet",
+     "bardiche",
+     "dane axe"
+    ],
+    "de": [
+     "axt",
+     "streitaxt",
+     "kriegsaxt",
+     "handaxt",
+     "doppelaxt",
+     "bartaxt",
+     "beil",
+     "larp axt"
+    ],
+    "nl": [
+     "bijl",
+     "strijdbijl",
+     "handbijl",
+     "dubbele bijl"
+    ]
+   }
+  },
+  {
+   "id": "mace_hammer",
+   "group": "weapon",
+   "ru": "Булава / молот",
+   "en": "Mace / hammer",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "булава",
+     "молот",
+     "боевой молот",
+     "пернач",
+     "шестопёр",
+     "дубина",
+     "палица",
+     "кистень",
+     "цеп",
+     "моргенштерн",
+     "кувалда",
+     "клюв ворона",
+     "шестопер",
+     "пернач булава"
+    ],
+    "en": [
+     "mace",
+     "hammer",
+     "war hammer",
+     "warhammer",
+     "maul",
+     "club",
+     "cudgel",
+     "flail",
+     "morning star",
+     "morningstar",
+     "flanged mace",
+     "sledgehammer",
+     "crow beak"
+    ],
+    "de": [
+     "streitkolben",
+     "keule",
+     "kriegshammer",
+     "hammer",
+     "morgenstern",
+     "flegel",
+     "dreschflegel",
+     "krähenschnabel",
+     "polsterwaffe hammer",
+     "keule",
+     "spielkeule",
+     "polsterkeule",
+     "trainingswaffe"
+    ],
+    "nl": [
+     "knots",
+     "strijdknots",
+     "strijdhamer",
+     "hamer",
+     "morgenster",
+     "dorsvlegel"
+    ]
+   }
+  },
+  {
+   "id": "spear",
+   "group": "weapon",
+   "ru": "Копьё",
+   "en": "Spear",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "копьё",
+     "копье",
+     "пика",
+     "рогатина",
+     "трезубец",
+     "дротик",
+     "сулица"
+    ],
+    "en": [
+     "spear",
+     "pike",
+     "lance",
+     "trident",
+     "javelin",
+     "boar spear",
+     "partisan",
+     "spears"
+    ],
+    "de": [
+     "speer",
+     "lanze",
+     "pike",
+     "dreizack",
+     "wurfspeer",
+     "saufeder"
+    ],
+    "nl": [
+     "speer",
+     "lans",
+     "piek",
+     "drietand"
+    ]
+   }
+  },
+  {
+   "id": "polearm",
+   "group": "weapon",
+   "ru": "Древковое (алебарда, глефа)",
+   "en": "Polearm",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "алебарда",
+     "глефа",
+     "гвизарма",
+     "нагината",
+     "протазан",
+     "совня",
+     "древковое",
+     "древковое оружие",
+     "боевая коса",
+     "люцернский молот"
+    ],
+    "en": [
+     "polearm",
+     "pole arm",
+     "halberd",
+     "glaive",
+     "guisarme",
+     "naginata",
+     "bill",
+     "voulge",
+     "war scythe",
+     "lucerne hammer",
+     "pole weapon",
+     "poleaxe"
+    ],
+    "de": [
+     "stangenwaffe",
+     "hellebarde",
+     "glefe",
+     "gleve",
+     "naginata",
+     "kriegssense",
+     "luzerner hammer",
+     "yari",
+     "schlacht sense",
+     "sense",
+     "glefe"
+    ],
+    "nl": [
+     "stokwapen",
+     "hellebaard",
+     "glaive",
+     "naginata"
+    ]
+   }
+  },
+  {
+   "id": "staff",
+   "group": "weapon",
+   "ru": "Посох",
+   "en": "Staff",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "посох",
+     "боевой посох",
+     "шест",
+     "жезл",
+     "волшебный посох",
+     "дубинка"
+    ],
+    "en": [
+     "staff",
+     "quarterstaff",
+     "bo staff",
+     "wizard staff",
+     "mage staff",
+     "wand",
+     "rod",
+     "baton",
+     "staffs"
+    ],
+    "de": [
+     "stab",
+     "kampfstab",
+     "zauberstab",
+     "magierstab",
+     "knüppel",
+     "viertelstab",
+     "kampfstab",
+     "stab holz"
+    ],
+    "nl": [
+     "staf",
+     "tovenaarsstaf",
+     "stok"
+    ]
+   }
+  },
+  {
+   "id": "thrown",
+   "group": "weapon",
+   "ru": "Метательное",
+   "en": "Thrown weapon",
+   "measures": [
+    "weight_g",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "метательный нож",
+     "метательное",
+     "сюрикен",
+     "метательный топор",
+     "метательный дротик"
+    ],
+    "en": [
+     "throwing knife",
+     "throwing knives",
+     "throwing axe",
+     "throwing dagger",
+     "shuriken",
+     "throwing star",
+     "throwing weapon",
+     "throwing weapons"
+    ],
+    "de": [
+     "wurfmesser",
+     "wurfaxt",
+     "wurfstern",
+     "wurfwaffe"
+    ],
+    "nl": [
+     "werpmes",
+     "werpbijl",
+     "werpster"
+    ]
+   }
+  },
+  {
+   "id": "shield",
+   "group": "shield",
+   "ru": "Щит",
+   "en": "Shield",
+   "measures": [
+    "diagonal_cm",
+    "diameter_cm",
+    "weight_g",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "щит",
+     "круглый щит",
+     "каплевидный щит",
+     "треугольный щит",
+     "тарч",
+     "павеза",
+     "ростовой щит",
+     "экю"
+    ],
+    "en": [
+     "shield",
+     "round shield",
+     "kite shield",
+     "heater shield",
+     "tower shield",
+     "pavise",
+     "viking shield",
+     "targe",
+     "shields",
+     "foam shield"
+    ],
+    "de": [
+     "schild",
+     "rundschild",
+     "tropfenschild",
+     "dreieckschild",
+     "turmschild",
+     "pavese",
+     "wikingerschild",
+     "larp schild",
+     "schilde",
+     "larp schilde"
+    ],
+    "nl": [
+     "schild",
+     "rond schild",
+     "toren schild",
+     "vikingschild"
+    ]
+   }
+  },
+  {
+   "id": "buckler",
+   "group": "shield",
+   "ru": "Баклер",
+   "en": "Buckler",
+   "parent_id": "shield",
+   "measures": [
+    "diameter_cm",
+    "weight_g"
+   ],
+   "aliases": {
+    "ru": [
+     "баклер",
+     "кулачный щит",
+     "малый щит"
+    ],
+    "en": [
+     "buckler",
+     "small shield",
+     "fist shield"
+    ],
+    "de": [
+     "buckler",
+     "faustschild",
+     "kleiner schild"
+    ],
+    "nl": [
+     "beukelaar",
+     "klein schild"
+    ]
+   }
+  },
+  {
+   "id": "bow",
+   "group": "ranged",
+   "ru": "Лук",
+   "en": "Bow",
+   "measures": [
+    "draw_kg",
+    "draw_lbs",
+    "length_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "лук",
+     "длинный лук",
+     "лонгбоу",
+     "рекурсивный лук",
+     "рекурв",
+     "составной лук",
+     "лук для ларп",
+     "лук для ролевых игр",
+     "лук деревянный",
+     "лук спортивный"
+    ],
+    "en": [
+     "bow",
+     "longbow",
+     "long bow",
+     "recurve bow",
+     "recurve",
+     "horse bow",
+     "flatbow",
+     "larp bow",
+     "bows"
+    ],
+    "de": [
+     "bogen",
+     "langbogen",
+     "recurvebogen",
+     "reiterbogen",
+     "larp bogen"
+    ],
+    "nl": [
+     "boog",
+     "langboog",
+     "recurveboog",
+     "larp boog"
+    ]
+   }
+  },
+  {
+   "id": "crossbow",
+   "group": "ranged",
+   "ru": "Арбалет",
+   "en": "Crossbow",
+   "measures": [
+    "draw_kg",
+    "draw_lbs"
+   ],
+   "aliases": {
+    "ru": [
+     "арбалет",
+     "самострел"
+    ],
+    "en": [
+     "crossbow",
+     "crossbows",
+     "pistol crossbow"
+    ],
+    "de": [
+     "armbrust",
+     "larp armbrust"
+    ],
+    "nl": [
+     "kruisboog"
+    ]
+   }
+  },
+  {
+   "id": "arrows",
+   "group": "ranged",
+   "ru": "Стрелы и болты",
+   "en": "Arrows and bolts",
+   "measures": [
+    "head_mm",
+    "hardness_shore_a"
+   ],
+   "aliases": {
+    "ru": [
+     "стрела",
+     "стрелы",
+     "болт",
+     "болты",
+     "гуманизатор",
+     "гуманизаторы",
+     "ларп стрелы",
+     "стрелы с мягким наконечником"
+    ],
+    "en": [
+     "arrow",
+     "arrows",
+     "bolt",
+     "bolts",
+     "larp arrow",
+     "larp arrows",
+     "safety arrow",
+     "foam tipped arrow",
+     "blunt arrow",
+     "arrowhead"
+    ],
+    "de": [
+     "pfeil",
+     "pfeile",
+     "bolzen",
+     "larp pfeile",
+     "polsterpfeil",
+     "sicherheitspfeil"
+    ],
+    "nl": [
+     "pijl",
+     "pijlen",
+     "larp pijlen"
+    ]
+   }
+  },
+  {
+   "id": "quiver",
+   "group": "accessory",
+   "ru": "Колчан",
+   "en": "Quiver",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "колчан",
+     "тул"
+    ],
+    "en": [
+     "quiver",
+     "quivers"
+    ],
+    "de": [
+     "köcher"
+    ],
+    "nl": [
+     "pijlkoker"
+    ]
+   }
+  },
+  {
+   "id": "helmet",
+   "group": "armour",
+   "ru": "Шлем",
+   "en": "Helmet",
+   "zones": [
+    "head"
+   ],
+   "layer": 3,
+   "measures": [
+    "head_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "шлем",
+     "бацинет",
+     "салад",
+     "армет",
+     "шапель",
+     "барбют",
+     "топфхельм",
+     "норманнский шлем",
+     "спангенхельм",
+     "кожаный шлем",
+     "шишак",
+     "капюшон кольчужный"
+    ],
+    "en": [
+     "helmet",
+     "helm",
+     "bascinet",
+     "sallet",
+     "armet",
+     "kettle hat",
+     "barbute",
+     "great helm",
+     "nasal helmet",
+     "spangenhelm",
+     "leather helmet",
+     "viking helmet",
+     "helmets",
+     "coif"
+    ],
+    "de": [
+     "helm",
+     "beckenhaube",
+     "schaller",
+     "eisenhut",
+     "topfhelm",
+     "nasalhelm",
+     "spangenhelm",
+     "lederhelm",
+     "wikingerhelm",
+     "kettenhaube",
+     "helme",
+     "larp helme",
+     "lederhelme"
+    ],
+    "nl": [
+     "helm",
+     "bekkeneel",
+     "ketelhoed",
+     "leren helm",
+     "vikinghelm",
+     "maliënkap"
+    ]
+   }
+  },
+  {
+   "id": "gorget",
+   "group": "armour",
+   "ru": "Горжет",
+   "en": "Gorget",
+   "zones": [
+    "neck"
+   ],
+   "layer": 3,
+   "measures": [
+    "neck_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "горжет",
+     "бармица",
+     "защита шеи",
+     "ожерелье кольчужное"
+    ],
+    "en": [
+     "gorget",
+     "neck guard",
+     "aventail",
+     "neck protection"
+    ],
+    "de": [
+     "halsschutz",
+     "kragen",
+     "brünne",
+     "halsberge",
+     "halsberg",
+     "kragenpanzer"
+    ],
+    "nl": [
+     "halskraag",
+     "nekbescherming"
+    ]
+   }
+  },
+  {
+   "id": "gambeson",
+   "group": "armour",
+   "ru": "Поддоспешник / стёганка",
+   "en": "Gambeson",
+   "zones": [
+    "torso",
+    "upper_arm"
+   ],
+   "layer": 1,
+   "measures": [
+    "chest_cm",
+    "height_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "поддоспешник",
+     "стёганка",
+     "стеганка",
+     "гамбезон",
+     "акетон",
+     "стёганый доспех",
+     "стёганая куртка",
+     "тегиляй"
+    ],
+    "en": [
+     "gambeson",
+     "aketon",
+     "padded armour",
+     "padded armor",
+     "padded jacket",
+     "arming jacket",
+     "arming doublet",
+     "quilted armour",
+     "padded coat"
+    ],
+    "de": [
+     "gambeson",
+     "wams",
+     "gepolsterte rüstung",
+     "polsterwams",
+     "aketon",
+     "gambesons",
+     "gambeson konvolut",
+     "wattierte jacke",
+     "rüstwams",
+     "gambesons",
+     "langarm gambeson",
+     "long sleeved gambeson"
+    ],
+    "nl": [
+     "gambeson",
+     "gewatteerd wambuis",
+     "gewatteerde jas"
+    ]
+   }
+  },
+  {
+   "id": "chainmail",
+   "group": "armour",
+   "ru": "Кольчуга",
+   "en": "Chainmail",
+   "zones": [
+    "torso",
+    "upper_arm",
+    "hips"
+   ],
+   "layer": 2,
+   "measures": [
+    "chest_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "кольчуга",
+     "хауберк",
+     "хауберг",
+     "байдана",
+     "кольчужная рубаха",
+     "кольчужный доспех"
+    ],
+    "en": [
+     "chainmail",
+     "chain mail",
+     "mail shirt",
+     "hauberk",
+     "haubergeon",
+     "byrnie",
+     "mail armour",
+     "mail armor",
+     "riveted chainmail",
+     "butted chainmail"
+    ],
+    "de": [
+     "kettenhemd",
+     "kettenrüstung",
+     "ringpanzer",
+     "kettenpanzer"
+    ],
+    "nl": [
+     "maliënkolder",
+     "maliën",
+     "kettinghemd"
+    ],
+    "kk": [
+     "сауыт",
+     "кіреуке",
+     "берен"
+    ]
+   }
+  },
+  {
+   "id": "cuirass",
+   "group": "armour",
+   "ru": "Кираса / нагрудник",
+   "en": "Cuirass / breastplate",
+   "zones": [
+    "torso"
+   ],
+   "layer": 3,
+   "measures": [
+    "chest_cm",
+    "torso_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "кираса",
+     "нагрудник",
+     "бригантина",
+     "бригандина",
+     "брига",
+     "латный доспех",
+     "ламелляр",
+     "ламеллярный доспех",
+     "чешуйчатый доспех",
+     "зерцало",
+     "корпусной доспех",
+     "пластинчатый доспех"
+    ],
+    "en": [
+     "cuirass",
+     "breastplate",
+     "brigandine",
+     "plate armour",
+     "plate armor",
+     "lamellar",
+     "scale armour",
+     "scale armor",
+     "body armour",
+     "body armor",
+     "torso armour",
+     "torso armor",
+     "chest armour",
+     "chest plate",
+     "chestplate",
+     "leather cuirass",
+     "leather torso",
+     "leather armour",
+     "leather armor",
+     "armour",
+     "armor",
+     "body plate",
+     "harness"
+    ],
+    "de": [
+     "kürass",
+     "brustplatte",
+     "brustpanzer",
+     "brigantine",
+     "plattenrüstung",
+     "lamellenrüstung",
+     "schuppenpanzer",
+     "lederrüstung torso",
+     "brustharnisch",
+     "rüstung",
+     "rüstungen",
+     "lederrüstung",
+     "echtleder rüstung",
+     "orc rüstung",
+     "ork rüstung",
+     "stahlmieder",
+     "lederweste rüstung",
+     "fantasy rüstung",
+     "rüstungsteile",
+     "rüstungsteil",
+     "schuppenpanzer",
+     "schuppen rüstung",
+     "plattenpanzer",
+     "lederpanzer",
+     "brustpanzer"
+    ],
+    "nl": [
+     "kuras",
+     "borstplaat",
+     "borstharnas",
+     "plaatharnas",
+     "lamellenharnas",
+     "schubbenpantser"
+    ]
+   }
+  },
+  {
+   "id": "pauldron",
+   "group": "armour",
+   "ru": "Наплечники",
+   "en": "Pauldrons",
+   "zones": [
+    "shoulders"
+   ],
+   "layer": 3,
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "наплечники",
+     "наплечник",
+     "оплечье",
+     "плечи",
+     "защита плеч"
+    ],
+    "en": [
+     "pauldron",
+     "pauldrons",
+     "spaulder",
+     "spaulders",
+     "shoulder armour",
+     "shoulder armor",
+     "shoulder guards",
+     "shoulder plates",
+     "shoulders",
+     "shoulder",
+     "shoulder piece"
+    ],
+    "de": [
+     "schulterpanzer",
+     "schulterplatten",
+     "schulterschutz",
+     "schultern"
+    ],
+    "nl": [
+     "schouderstukken",
+     "schouderbescherming",
+     "schouderplaten"
+    ]
+   }
+  },
+  {
+   "id": "bracers",
+   "group": "armour",
+   "ru": "Наручи",
+   "en": "Bracers",
+   "zones": [
+    "forearm"
+   ],
+   "layer": 3,
+   "measures": [
+    "forearm_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "наручи",
+     "наруч",
+     "защита предплечий",
+     "предплечья",
+     "поручи",
+     "вамбрейсы",
+     "наручи кожаные"
+    ],
+    "en": [
+     "bracer",
+     "bracers",
+     "vambrace",
+     "vambraces",
+     "arm guards",
+     "forearm guards",
+     "arm armour",
+     "arm armor",
+     "leather bracers",
+     "rerebrace",
+     "rerebraces",
+     "arm protection"
+    ],
+    "de": [
+     "armschienen",
+     "armschiene",
+     "unterarmschutz",
+     "armschutz",
+     "lederarmschienen",
+     "armzeug",
+     "armschützer",
+     "armstulpen",
+     "stulpen"
+    ],
+    "nl": [
+     "armbeschermers",
+     "onderarmbescherming",
+     "armschilden",
+     "leren armbeschermers"
+    ]
+   }
+  },
+  {
+   "id": "gloves",
+   "group": "armour",
+   "ru": "Перчатки / рукавицы",
+   "en": "Gloves / gauntlets",
+   "zones": [
+    "hands"
+   ],
+   "layer": 3,
+   "measures": [
+    "hand_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "перчатки",
+     "рукавицы",
+     "латные перчатки",
+     "латные рукавицы",
+     "краги",
+     "боевые перчатки",
+     "кольчужные перчатки"
+    ],
+    "en": [
+     "gloves",
+     "gauntlet",
+     "gauntlets",
+     "mittens",
+     "leather gloves",
+     "armoured gloves",
+     "plate gauntlets",
+     "chain gauntlets",
+     "hand protection",
+     "archery glove",
+     "half-glove",
+     "half glove"
+    ],
+    "de": [
+     "handschuhe",
+     "panzerhandschuhe",
+     "lederhandschuhe",
+     "stulpenhandschuhe",
+     "fäustlinge",
+     "handschuh",
+     "lederhandschuh"
+    ],
+    "nl": [
+     "handschoenen",
+     "pantserhandschoenen",
+     "leren handschoenen"
+    ]
+   }
+  },
+  {
+   "id": "tassets",
+   "group": "armour",
+   "ru": "Набедренники / тассеты",
+   "en": "Tassets / cuisses",
+   "zones": [
+    "hips",
+    "thighs"
+   ],
+   "layer": 3,
+   "measures": [
+    "thigh_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "набедренники",
+     "набедренник",
+     "тассеты",
+     "тассет",
+     "кюисы",
+     "защита бёдер",
+     "юбка латная",
+     "фолд",
+     "фартук латный"
+    ],
+    "en": [
+     "tasset",
+     "tassets",
+     "cuisse",
+     "cuisses",
+     "thigh armour",
+     "thigh armor",
+     "thigh guards",
+     "fauld",
+     "leg armour",
+     "leg armor",
+     "leg protection",
+     "upper leg armour"
+    ],
+    "de": [
+     "beintaschen",
+     "oberschenkelschutz",
+     "beinzeug",
+     "diechlinge",
+     "beinschutz"
+    ],
+    "nl": [
+     "dijbeschermers",
+     "beenbescherming",
+     "dijstukken"
+    ]
+   }
+  },
+  {
+   "id": "greaves",
+   "group": "armour",
+   "ru": "Поножи",
+   "en": "Greaves",
+   "zones": [
+    "shins"
+   ],
+   "layer": 3,
+   "measures": [
+    "calf_cm",
+    "shin_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "поножи",
+     "понож",
+     "защита голени",
+     "голени",
+     "наголенники",
+     "щитки на голень"
+    ],
+    "en": [
+     "greave",
+     "greaves",
+     "shin guards",
+     "shin armour",
+     "shin armor",
+     "leather greaves",
+     "lower leg armour",
+     "leg guards"
+    ],
+    "de": [
+     "beinschienen",
+     "beinschiene",
+     "schienbeinschutz",
+     "lederbeinschienen",
+     "vollbein-rüstung",
+     "beinrüstung",
+     "vollbein"
+    ],
+    "nl": [
+     "scheenplaten",
+     "scheenbeschermers",
+     "beenplaten"
+    ]
+   }
+  },
+  {
+   "id": "knee_elbow",
+   "group": "armour",
+   "ru": "Наколенники / налокотники",
+   "en": "Knee and elbow guards",
+   "zones": [
+    "knees",
+    "elbows"
+   ],
+   "layer": 3,
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "наколенники",
+     "наколенник",
+     "налокотники",
+     "налокотник",
+     "защита колен",
+     "защита локтей",
+     "колени латные",
+     "локти латные"
+    ],
+    "en": [
+     "poleyn",
+     "poleyns",
+     "couter",
+     "couters",
+     "knee guards",
+     "knee armour",
+     "knee cops",
+     "elbow guards",
+     "elbow cops",
+     "elbow armour",
+     "knee protection",
+     "elbow protection"
+    ],
+    "de": [
+     "kniekacheln",
+     "knieschutz",
+     "ellenbogenschutz",
+     "ellenbogenkacheln",
+     "kniepanzer"
+    ],
+    "nl": [
+     "kniebeschermers",
+     "kniestukken",
+     "elleboogbeschermers",
+     "elleboogstukken"
+    ]
+   }
+  },
+  {
+   "id": "boots",
+   "group": "clothing",
+   "ru": "Обувь",
+   "en": "Boots / shoes",
+   "zones": [
+    "feet"
+   ],
+   "measures": [
+    "foot_cm",
+    "shoe_eu"
+   ],
+   "aliases": {
+    "ru": [
+     "сапоги",
+     "ботинки",
+     "обувь",
+     "поршни",
+     "ботфорты",
+     "туфли",
+     "кожаные сапоги",
+     "сандалии"
+    ],
+    "en": [
+     "boots",
+     "shoes",
+     "footwear",
+     "leather boots",
+     "viking boots",
+     "turnshoes",
+     "sandals",
+     "medieval boots",
+     "ankle boots"
+    ],
+    "de": [
+     "stiefel",
+     "schuhe",
+     "lederstiefel",
+     "wendeschuhe",
+     "mittelalter stiefel",
+     "sandalen",
+     "stiefeln",
+     "schuhen",
+     "lederschuhe",
+     "larp stiefel",
+     "halbstiefel",
+     "stiefeletten",
+     "halbschuhe",
+     "schnürstiefel"
+    ],
+    "nl": [
+     "laarzen",
+     "schoenen",
+     "leren laarzen",
+     "middeleeuwse laarzen"
+    ]
+   }
+  },
+  {
+   "id": "tunic",
+   "group": "clothing",
+   "ru": "Туника / рубаха",
+   "en": "Tunic / shirt",
+   "zones": [
+    "torso"
+   ],
+   "layer": 0,
+   "measures": [
+    "chest_cm",
+    "height_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "туника",
+     "рубаха",
+     "рубашка",
+     "котта",
+     "камиза",
+     "сюрко",
+     "табард",
+     "жилет",
+     "дублет",
+     "камзол",
+     "кафтан",
+     "жупан",
+     "гербовая накидка"
+    ],
+    "en": [
+     "tunic",
+     "shirt",
+     "cotte",
+     "chemise",
+     "surcoat",
+     "tabard",
+     "vest",
+     "doublet",
+     "jerkin",
+     "coat",
+     "jacket",
+     "waistcoat",
+     "viking tunic",
+     "medieval shirt",
+     "tunics",
+     "garment set",
+     "gambeson vest"
+    ],
+    "de": [
+     "tunika",
+     "hemd",
+     "cotte",
+     "wappenrock",
+     "waffenrock",
+     "weste",
+     "wams",
+     "jacke",
+     "mittelalterhemd",
+     "kittel",
+     "wappenröcke",
+     "waffenröcke",
+     "tuniken",
+     "hemden",
+     "westen",
+     "wämser",
+     "leinenhemd",
+     "larp hemd",
+     "ärmel",
+     "landsknecht ärmel",
+     "wams"
+    ],
+    "nl": [
+     "tuniek",
+     "hemd",
+     "wapenrok",
+     "tabberd",
+     "vest",
+     "wambuis",
+     "jas",
+     "middeleeuws hemd"
+    ]
+   }
+  },
+  {
+   "id": "cloak",
+   "group": "clothing",
+   "ru": "Плащ",
+   "en": "Cloak",
+   "zones": [],
+   "measures": [
+    "length_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "плащ",
+     "накидка",
+     "мантия",
+     "пелерина",
+     "капюшон",
+     "плащ с капюшоном",
+     "шерстяной плащ",
+     "епанча"
+    ],
+    "en": [
+     "cloak",
+     "cape",
+     "mantle",
+     "robe",
+     "hooded cloak",
+     "wool cloak",
+     "hood",
+     "cowl",
+     "robes",
+     "capes"
+    ],
+    "de": [
+     "umhang",
+     "mantel",
+     "cape",
+     "kapuzenumhang",
+     "wollumhang",
+     "gugel",
+     "robe",
+     "umhänge",
+     "kapuzenumhänge",
+     "mäntel",
+     "capes",
+     "gugeln",
+     "wollmantel"
+    ],
+    "nl": [
+     "mantel",
+     "cape",
+     "kapmantel",
+     "wollen mantel",
+     "kap",
+     "mantels",
+     "capes"
+    ]
+   }
+  },
+  {
+   "id": "dress",
+   "group": "clothing",
+   "ru": "Платье / юбка",
+   "en": "Dress / skirt",
+   "zones": [],
+   "measures": [
+    "chest_cm",
+    "waist_cm",
+    "height_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "платье",
+     "юбка",
+     "сарафан",
+     "корсет",
+     "блио",
+     "котарди",
+     "средневековое платье",
+     "нижнее платье",
+     "верхнее платье"
+    ],
+    "en": [
+     "dress",
+     "skirt",
+     "gown",
+     "corset",
+     "bodice",
+     "kirtle",
+     "bliaut",
+     "underdress",
+     "overdress",
+     "medieval dress",
+     "dresses",
+     "skirts",
+     "cotehardie",
+     "cotte hardie",
+     "battleskirt",
+     "battle skirt"
+    ],
+    "de": [
+     "kleid",
+     "rock",
+     "korsett",
+     "mieder",
+     "unterkleid",
+     "überkleid",
+     "mittelalterkleid",
+     "gewand",
+     "kleider",
+     "röcke",
+     "korsage",
+     "korsagen",
+     "unterkleider"
+    ],
+    "nl": [
+     "jurk",
+     "rok",
+     "korset",
+     "onderjurk",
+     "middeleeuwse jurk",
+     "gewaad"
+    ]
+   }
+  },
+  {
+   "id": "trousers",
+   "group": "clothing",
+   "ru": "Штаны",
+   "en": "Trousers",
+   "zones": [
+    "hips",
+    "thighs",
+    "shins"
+   ],
+   "measures": [
+    "waist_cm",
+    "inseam_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "штаны",
+     "брюки",
+     "шоссы",
+     "порты",
+     "шаровары",
+     "бриджи",
+     "гетры",
+     "обмотки"
+    ],
+    "en": [
+     "trousers",
+     "pants",
+     "breeches",
+     "hose",
+     "chausses",
+     "leggings",
+     "leg wraps",
+     "winingas",
+     "viking trousers",
+     "medieval pants",
+     "gaiters",
+     "gaiter"
+    ],
+    "de": [
+     "hose",
+     "hosen",
+     "bruche",
+     "beinlinge",
+     "wickelgamaschen",
+     "wadenwickel",
+     "mittelalterhose",
+     "pluderhose",
+     "wadenwickel",
+     "wollwadenwickel",
+     "beinwickel"
+    ],
+    "nl": [
+     "broek",
+     "beenwindsels",
+     "beenlingen",
+     "middeleeuwse broek"
+    ]
+   }
+  },
+  {
+   "id": "headwear",
+   "group": "clothing",
+   "ru": "Головной убор",
+   "en": "Headwear",
+   "zones": [
+    "head"
+   ],
+   "measures": [
+    "head_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "шапка",
+     "шляпа",
+     "берет",
+     "чепец",
+     "капюшон-шаперон",
+     "шаперон",
+     "тюрбан",
+     "повязка",
+     "обруч",
+     "диадема",
+     "корона",
+     "венец"
+    ],
+    "en": [
+     "hat",
+     "cap",
+     "hood",
+     "chaperon",
+     "coif",
+     "beret",
+     "turban",
+     "headband",
+     "circlet",
+     "crown",
+     "tiara",
+     "headwear",
+     "hats",
+     "veil",
+     "fillet",
+     "scarf",
+     "wimple"
+    ],
+    "de": [
+     "hut",
+     "mütze",
+     "haube",
+     "gugel",
+     "kopfbedeckung",
+     "stirnband",
+     "stirnreif",
+     "krone",
+     "diadem",
+     "mützen",
+     "pelzmütze",
+     "pelzkappe",
+     "kappe",
+     "hüte",
+     "hauben",
+     "stirnbänder",
+     "kopftuch"
+    ],
+    "nl": [
+     "hoed",
+     "muts",
+     "kap",
+     "hoofdband",
+     "kroon",
+     "diadeem",
+     "hoofddeksel"
+    ]
+   }
+  },
+  {
+   "id": "belt",
+   "group": "accessory",
+   "ru": "Пояс / ремень",
+   "en": "Belt",
+   "measures": [
+    "waist_cm",
+    "length_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "пояс",
+     "ремень",
+     "кушак",
+     "портупея",
+     "поясной ремень",
+     "наборный пояс",
+     "кожаный пояс"
+    ],
+    "en": [
+     "belt",
+     "leather belt",
+     "sword belt",
+     "baldric",
+     "ring belt",
+     "long belt",
+     "belts",
+     "girdle",
+     "sash"
+    ],
+    "de": [
+     "gürtel",
+     "ledergürtel",
+     "schwertgürtel",
+     "ringgürtel",
+     "langgürtel",
+     "wehrgehänge",
+     "schärpe",
+     "gürteltasche set"
+    ],
+    "nl": [
+     "riem",
+     "gordel",
+     "leren riem",
+     "zwaardriem",
+     "ringgordel"
+    ]
+   }
+  },
+  {
+   "id": "scabbard",
+   "group": "accessory",
+   "ru": "Ножны / подвес",
+   "en": "Scabbard / frog",
+   "measures": [
+    "length_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "ножны",
+     "подвес",
+     "подвес для меча",
+     "чехол для меча",
+     "держатель оружия",
+     "подвес для топора"
+    ],
+    "en": [
+     "scabbard",
+     "sheath",
+     "frog",
+     "sword frog",
+     "weapon frog",
+     "sword holder",
+     "weapon holder",
+     "axe holder",
+     "dagger sheath",
+     "scabbards",
+     "holder",
+     "rapier holder",
+     "sword holder",
+     "dagger holder",
+     "holder small",
+     "holder large",
+     "weapon hanger",
+     "hanger"
+    ],
+    "de": [
+     "scheide",
+     "schwertscheide",
+     "schwerthalter",
+     "waffenhalter",
+     "gürtelhalter",
+     "axthalter",
+     "dolchscheide",
+     "messerhalter",
+     "wurfmesserhalter",
+     "wurf messerhalter",
+     "schwerthalter",
+     "axthalter",
+     "dolchhalter",
+     "schwert-halter",
+     "halter",
+     "waffen-halter",
+     "dolch-halter",
+     "axt-halter",
+     "schwertscheide leder"
+    ],
+    "nl": [
+     "schede",
+     "zwaardschede",
+     "wapenhouder",
+     "zwaardhouder",
+     "dolkschede"
+    ]
+   }
+  },
+  {
+   "id": "pouch",
+   "group": "accessory",
+   "ru": "Сумка / кошель",
+   "en": "Pouch / bag",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "сумка",
+     "кошель",
+     "кошелёк",
+     "подсумок",
+     "поясная сумка",
+     "мешочек",
+     "ташка",
+     "ранец",
+     "котомка"
+    ],
+    "en": [
+     "pouch",
+     "bag",
+     "purse",
+     "belt bag",
+     "belt pouch",
+     "satchel",
+     "backpack",
+     "sack",
+     "pouches",
+     "bags",
+     "coin purse",
+     "beltbag",
+     "belt-bag"
+    ],
+    "de": [
+     "beutel",
+     "tasche",
+     "gürteltasche",
+     "geldbeutel",
+     "umhängetasche",
+     "rucksack",
+     "lederbeutel",
+     "taschen",
+     "gürteltaschen"
+    ],
+    "nl": [
+     "buidel",
+     "tas",
+     "riemtas",
+     "geldbuidel",
+     "rugzak",
+     "leren buidel"
+    ]
+   }
+  },
+  {
+   "id": "jewelry",
+   "group": "accessory",
+   "ru": "Украшения",
+   "en": "Jewelry",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "украшение",
+     "украшения",
+     "кольцо",
+     "перстень",
+     "амулет",
+     "кулон",
+     "подвеска",
+     "брошь",
+     "фибула",
+     "браслет",
+     "серьги",
+     "ожерелье",
+     "бусы",
+     "гривна"
+    ],
+    "en": [
+     "jewelry",
+     "jewellery",
+     "ring",
+     "amulet",
+     "pendant",
+     "necklace",
+     "brooch",
+     "fibula",
+     "bracelet",
+     "earrings",
+     "torc",
+     "torque",
+     "beads",
+     "pin",
+     "pins",
+     "badge",
+     "gewandschmuck",
+     "choker",
+     "chain",
+     "chains"
+    ],
+    "de": [
+     "schmuck",
+     "ring",
+     "amulett",
+     "anhänger",
+     "halskette",
+     "brosche",
+     "fibel",
+     "armreif",
+     "ohrringe",
+     "torque",
+     "fibeln",
+     "ketten",
+     "armreifen",
+     "gewandschmuck",
+     "bronzefibel",
+     "fibel",
+     "anstecker",
+     "choker",
+     "kette",
+     "ketten",
+     "halskette",
+     "armband",
+     "ohrring"
+    ],
+    "nl": [
+     "sieraden",
+     "ring",
+     "amulet",
+     "hanger",
+     "ketting",
+     "broche",
+     "fibula",
+     "armband",
+     "oorbellen"
+    ]
+   }
+  },
+  {
+   "id": "tent",
+   "group": "camp",
+   "ru": "Шатёр / палатка",
+   "en": "Tent",
+   "measures": [
+    "size_m"
+   ],
+   "aliases": {
+    "ru": [
+     "шатёр",
+     "шатер",
+     "палатка",
+     "тент",
+     "навес",
+     "исторический шатёр",
+     "юрта",
+     "павильон"
+    ],
+    "en": [
+     "tent",
+     "pavilion",
+     "marquee",
+     "medieval tent",
+     "viking tent",
+     "canvas tent",
+     "bell tent",
+     "yurt",
+     "tents",
+     "awning"
+    ],
+    "de": [
+     "zelt",
+     "mittelalterzelt",
+     "pavillon",
+     "wikingerzelt",
+     "lagerzelt",
+     "sonnensegel",
+     "jurte",
+     "zelte",
+     "mittelalterzelte",
+     "pavillons"
+    ],
+    "nl": [
+     "tent",
+     "middeleeuwse tent",
+     "paviljoen",
+     "vikingtent",
+     "luifel"
+    ]
+   }
+  },
+  {
+   "id": "camp_gear",
+   "group": "camp",
+   "ru": "Лагерный быт",
+   "en": "Camp equipment",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "посуда",
+     "кружка",
+     "миска",
+     "котелок",
+     "фонарь",
+     "светильник",
+     "рог",
+     "рог для питья",
+     "фляга",
+     "бурдюк",
+     "лавка",
+     "стол походный",
+     "спальник",
+     "быт",
+     "походная посуда",
+     "кружка",
+     "котелок",
+     "фляга"
+    ],
+    "en": [
+     "tableware",
+     "mug",
+     "tankard",
+     "bowl",
+     "cauldron",
+     "lantern",
+     "lamp",
+     "drinking horn",
+     "horn",
+     "flask",
+     "waterskin",
+     "bench",
+     "camp table",
+     "sleeping bag",
+     "cutlery",
+     "goblet",
+     "chalice",
+     "plate",
+     "dice",
+     "poker deck",
+     "cards",
+     "playing cards",
+     "mugs",
+     "tankards",
+     "bowls",
+     "cups",
+     "spoons"
+    ],
+    "de": [
+     "geschirr",
+     "becher",
+     "krug",
+     "schale",
+     "kessel",
+     "laterne",
+     "trinkhorn",
+     "horn",
+     "feldflasche",
+     "wasserschlauch",
+     "lagerbank",
+     "lagertisch",
+     "kelch",
+     "teller",
+     "tassen",
+     "tasse",
+     "krüge",
+     "gläser",
+     "glas",
+     "kupfertopf",
+     "topf",
+     "holzschale",
+     "holzlöffel",
+     "löffel",
+     "trinkhörner",
+     "laternen",
+     "kerzenhalter",
+     "geschirr set"
+    ],
+    "nl": [
+     "servies",
+     "beker",
+     "kroes",
+     "kom",
+     "ketel",
+     "lantaarn",
+     "drinkhoorn",
+     "veldfles",
+     "waterzak",
+     "bank",
+     "kampeertafel",
+     "kelk"
+    ]
+   }
+  },
+  {
+   "id": "mask",
+   "group": "sfx",
+   "ru": "Маска",
+   "en": "Mask",
+   "zones": [
+    "face"
+   ],
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "маска",
+     "латексная маска",
+     "полумаска",
+     "маска орка",
+     "маска зверя",
+     "личина"
+    ],
+    "en": [
+     "mask",
+     "latex mask",
+     "half mask",
+     "half-mask",
+     "orc mask",
+     "beast mask",
+     "masks",
+     "face mask",
+     "masquerade mask"
+    ],
+    "de": [
+     "maske",
+     "latexmaske",
+     "halbmaske",
+     "orkmaske",
+     "masken"
+    ],
+    "nl": [
+     "masker",
+     "latex masker",
+     "halfmasker",
+     "orkmasker"
+    ]
+   }
+  },
+  {
+   "id": "prosthetics",
+   "group": "sfx",
+   "ru": "Грим и накладки",
+   "en": "Make-up and prosthetics",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "грим",
+     "накладка",
+     "накладки",
+     "уши эльфа",
+     "эльфийские уши",
+     "клыки",
+     "рога",
+     "латексная накладка",
+     "кровь бутафорская",
+     "искусственная кровь",
+     "протез"
+    ],
+    "en": [
+     "make-up",
+     "makeup",
+     "prosthetic",
+     "prosthetics",
+     "elf ears",
+     "elven ears",
+     "fangs",
+     "horns",
+     "latex prosthetic",
+     "fake blood",
+     "sfx blood",
+     "effect blood",
+     "scar",
+     "wound",
+     "body paint",
+     "temporary tattoo",
+     "tattoo",
+     "fx transfer",
+     "transfers",
+     "blood capsules",
+     "collodion",
+     "collodium",
+     "latex milk",
+     "liquid latex"
+    ],
+    "de": [
+     "schminke",
+     "make-up",
+     "prothese",
+     "latexteil",
+     "elfenohren",
+     "spitzohren",
+     "fangzähne",
+     "hörner",
+     "kunstblut",
+     "theaterblut",
+     "wunde",
+     "narbe"
+    ],
+    "nl": [
+     "schmink",
+     "make-up",
+     "prothese",
+     "elfenoren",
+     "hoektanden",
+     "hoorns",
+     "nepbloed",
+     "wond"
+    ]
+   }
+  },
+  {
+   "id": "kit",
+   "group": "armour",
+   "ru": "Комплект (набор)",
+   "en": "Complete set / kit",
+   "measures": [
+    "chest_cm",
+    "height_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "комплект",
+     "набор",
+     "полный комплект",
+     "сет",
+     "кит"
+    ],
+    "en": [
+     "complete set",
+     "complete kit",
+     "full set",
+     "full kit",
+     "armour set",
+     "armor set",
+     "light kit",
+     "heavy kit",
+     "starter kit",
+     "set of",
+     "kit",
+     "bundle",
+     "lot of",
+     "job lot"
+    ],
+    "de": [
+     "komplettset",
+     "rüstungsset",
+     "set",
+     "komplette rüstung",
+     "starterset",
+     "konvolut",
+     "larp konvolut",
+     "paket",
+     "sammlung",
+     "komplett",
+     "komplettes kostüm",
+     "gewandung set"
+    ],
+    "nl": [
+     "complete set",
+     "harnas set",
+     "startersset"
+    ]
+   }
+  },
+  {
+   "id": "banner",
+   "group": "camp",
+   "ru": "Знамя / штандарт",
+   "en": "Banner / standard",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "знамя",
+     "штандарт",
+     "флаг",
+     "вымпел",
+     "стяг",
+     "хоругвь"
+    ],
+    "en": [
+     "banner",
+     "battle standard",
+     "flag",
+     "pennon",
+     "pennant",
+     "gonfalon",
+     "t-top",
+     "cross-top"
+    ],
+    "de": [
+     "banner",
+     "fahne",
+     "standarte",
+     "wimpel",
+     "feldzeichen",
+     "wimpelkette",
+     "wimpelschnur",
+     "fahnenkette"
+    ],
+    "nl": [
+     "banier",
+     "vaandel",
+     "vlag",
+     "wimpel"
+    ]
+   }
+  },
+  {
+   "id": "props",
+   "group": "sfx",
+   "ru": "Реквизит (зелья, бомбы, артефакты)",
+   "en": "Props (potions, bombs, artefacts)",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "реквизит",
+     "зелье",
+     "бутафория",
+     "артефакт",
+     "бомба",
+     "склянка",
+     "свиток",
+     "книга заклинаний",
+     "череп"
+    ],
+    "en": [
+     "prop",
+     "props",
+     "potion",
+     "vial",
+     "alchemical",
+     "bomb",
+     "breacher bomb",
+     "elemental stone",
+     "crock",
+     "artefact",
+     "artifact",
+     "scroll",
+     "spellbook",
+     "skull",
+     "stone"
+    ],
+    "de": [
+     "requisite",
+     "trank",
+     "phiole",
+     "bombe",
+     "artefakt",
+     "schriftrolle",
+     "zauberbuch",
+     "totenkopf"
+    ],
+    "nl": [
+     "rekwisiet",
+     "drankje",
+     "flesje",
+     "bom",
+     "artefact",
+     "perkamentrol",
+     "schedel"
+    ]
+   }
+  },
+  {
+   "id": "weapon_parts",
+   "group": "weapon",
+   "ru": "Заготовки и материалы для оружия",
+   "en": "Foam and weapon parts",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "заготовка",
+     "сердечник",
+     "стеклопластик",
+     "пенополиуретан",
+     "латекс жидкий",
+     "материал для оружия"
+    ],
+    "en": [
+     "foam sheet",
+     "epic foam",
+     "fiberglass rod",
+     "fibreglass rod",
+     "weapon core",
+     "diy parts",
+     "foam block",
+     "coating kit",
+     "latex kit"
+    ],
+    "de": [
+     "glasfaserstab",
+     "kernstab",
+     "bastelset",
+     "schaumstoffplatte",
+     "schaumstoff block",
+     "waffenrohling",
+     "rohling"
+    ],
+    "nl": [
+     "schuim",
+     "glasvezelstaaf",
+     "kernstaaf"
+    ]
+   }
+  },
+  {
+   "id": "costume",
+   "group": "clothing",
+   "ru": "Костюм (целиком)",
+   "en": "Costume (full)",
+   "measures": [
+    "chest_cm",
+    "height_cm"
+   ],
+   "aliases": {
+    "ru": [
+     "костюм",
+     "образ",
+     "прикид",
+     "полный костюм",
+     "костюм персонажа",
+     "антураж"
+    ],
+    "en": [
+     "costume",
+     "outfit",
+     "garb",
+     "full costume",
+     "character costume",
+     "cosplay costume"
+    ],
+    "de": [
+     "kostüm",
+     "kostüme",
+     "gewandung",
+     "gewandungen",
+     "larp gewandung",
+     "mittelalter kostüm",
+     "verkleidung",
+     "outfit",
+     "magier kostüm",
+     "ritter kostüm"
+    ],
+    "nl": [
+     "kostuum",
+     "kostuums",
+     "gewaad",
+     "outfit"
+    ]
+   }
+  },
+  {
+   "id": "furniture_decor",
+   "group": "camp",
+   "ru": "Мебель и декор лагеря",
+   "en": "Camp furniture and decor",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "мебель",
+     "стол",
+     "лавка",
+     "сундук",
+     "декор",
+     "декорация",
+     "знамя лагеря",
+     "шкура"
+    ],
+    "en": [
+     "furniture",
+     "table",
+     "bench",
+     "chest",
+     "decor",
+     "decoration",
+     "trunk",
+     "fur",
+     "hide",
+     "pelt"
+    ],
+    "de": [
+     "möbel",
+     "tisch",
+     "kommode",
+     "truhe",
+     "bank",
+     "deko",
+     "dekoration",
+     "fell",
+     "schaffell",
+     "herrlager",
+     "lagerausstattung",
+     "hocker",
+     "stuhl",
+     "rüstungsständer",
+     "waffenständer",
+     "ständer"
+    ],
+    "nl": [
+     "meubels",
+     "tafel",
+     "kist",
+     "bank",
+     "decoratie",
+     "vacht"
+    ]
+   }
+  },
+  {
+   "id": "other_misc",
+   "group": "sfx",
+   "ru": "Прочее (книги, игры, сувениры)",
+   "en": "Other (books, games, souvenirs)",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "книга",
+     "книги",
+     "настольная игра",
+     "сувенир",
+     "карты игральные"
+    ],
+    "en": [
+     "book",
+     "books",
+     "board game",
+     "souvenir",
+     "poster",
+     "print"
+    ],
+    "de": [
+     "buch",
+     "bücher",
+     "gewandungsbuch",
+     "regelwerk",
+     "brettspiel",
+     "poster",
+     "souvenir",
+     "sammelfigur"
+    ],
+    "nl": [
+     "boek",
+     "boeken",
+     "bordspel"
+    ]
+   }
+  },
+  {
+   "id": "weapon_other",
+   "group": "weapon",
+   "ru": "Оружие (класс не указан)",
+   "en": "Weapon (unclassified)",
+   "measures": [
+    "length_cm",
+    "weight_g",
+    "core",
+    "material"
+   ],
+   "aliases": {
+    "ru": [
+     "оружие",
+     "ларп оружие",
+     "протектированное оружие",
+     "мягкое оружие",
+     "оружие для ролевых игр",
+     "детское оружие",
+     "ларп вооружение",
+     "протектированное вооружение",
+     "larp оружие",
+     "ларп оружие",
+     "мягкое оружие для ролевых игр"
+    ],
+    "en": [
+     "weapon",
+     "weapons",
+     "larp weapon",
+     "foam weapon",
+     "boffer",
+     "larp weapons",
+     "replica"
+    ],
+    "de": [
+     "waffe",
+     "waffen",
+     "larp waffe",
+     "larp waffen",
+     "polsterwaffe",
+     "polsterwaffen",
+     "schaumstoffwaffe",
+     "schaumwaffe",
+     "replika"
+    ],
+    "nl": [
+     "wapen",
+     "wapens",
+     "larp wapen",
+     "schuimwapen"
+    ]
+   }
+  },
+  {
+   "id": "crafting_supplies",
+   "group": "supplies",
+   "ru": "Материалы и расходники для крафта",
+   "en": "Crafting supplies",
+   "measures": [],
+   "aliases": {
+    "ru": [
+     "заклёпки",
+     "заклепки",
+     "хольнитены",
+     "кожаный шнур",
+     "краска для кожи",
+     "пробойник",
+     "фурнитура",
+     "пряжка",
+     "пряжки",
+     "латекс жидкий",
+     "краска",
+     "нитки",
+     "пластазот",
+     "эва лист",
+     "расходные материалы",
+     "расходники",
+     "инструменты",
+     "краска для латекса"
+    ],
+    "en": [
+     "rivet",
+     "rivets",
+     "hollow rivet",
+     "eyelet",
+     "eyelets",
+     "leather dye",
+     "leather cord",
+     "lace",
+     "punch",
+     "punches",
+     "punch pliers",
+     "buckle",
+     "buckles",
+     "buckle set",
+     "paint",
+     "marker",
+     "yarn",
+     "thread",
+     "liquid latex",
+     "spray",
+     "stain",
+     "finish",
+     "acrylic",
+     "leather craft",
+     "leather strap",
+     "strap",
+     "fiebing",
+     "marabu",
+     "plastazote",
+     "eva sheet",
+     "foam sheet",
+     "kydex",
+     "glue",
+     "adhesive"
+    ],
+    "de": [
+     "niete",
+     "nieten",
+     "hohlniete",
+     "hohlnieten",
+     "knopfniete",
+     "aufnietplatte",
+     "öse",
+     "ösen",
+     "lederschnur",
+     "lederriemen",
+     "flechtriemen",
+     "riemen",
+     "schnalle",
+     "schnallen",
+     "schnallenset",
+     "lederfarbe",
+     "farbe",
+     "marker",
+     "garn",
+     "faden",
+     "flüssiglatex",
+     "spray",
+     "beize",
+     "lack",
+     "pinsel",
+     "punziereisen",
+     "lochzange",
+     "werkzeug",
+     "volleder",
+     "lederstück",
+     "lederhaut",
+     "schaumstoffplatte",
+     "kleber",
+     "zubehör bastel"
+    ],
+    "nl": [
+     "klinknagel",
+     "klinknagels",
+     "leerverf",
+     "leren veter",
+     "gesp",
+     "gespen",
+     "verf",
+     "garen",
+     "vloeibaar latex",
+     "lijm"
+    ]
+   }
+  }
+ ]
+}

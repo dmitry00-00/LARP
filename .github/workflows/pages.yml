@@ -1,0 +1,35 @@
+# Публикация site/ на GitHub Pages. Сборки нет: страница — статика, по http(s)
+# она читает site/data/feed.json. seed.js (копия фида для file://) в артефакт
+# не кладём — по сети он не нужен, а весит столько же, сколько фид.
+name: pages
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect static site
+        run: |
+          mkdir -p _site/data
+          cp site/index.html site/app.css site/app.js _site/
+          cp site/data/feed.json _site/data/
+          test -s _site/data/feed.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: _site }
+      - id: deployment
+        uses: actions/deploy-pages@v4
