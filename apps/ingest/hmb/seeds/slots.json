@@ -1137,7 +1137,9 @@
      "schuppen rüstung",
      "plattenpanzer",
      "lederpanzer",
-     "brustpanzer"
+     "brustpanzer",
+     "torso",
+     "torsopanzer"
     ],
     "nl": [
      "kuras",
@@ -1190,7 +1192,9 @@
      "schulterpanzer",
      "schulterplatten",
      "schulterschutz",
-     "schultern"
+     "schultern",
+     "schulter",
+     "schulterplatte"
     ],
     "nl": [
      "schouderstukken",
@@ -1636,7 +1640,15 @@
      "larp hemd",
      "ärmel",
      "landsknecht ärmel",
-     "wams"
+     "wams",
+     "bluse",
+     "blusen",
+     "kasack",
+     "surcot",
+     "tabard",
+     "übergewand",
+     "kaftan",
+     "kaftane"
     ],
     "nl": [
      "tuniek",
@@ -1695,7 +1707,18 @@
      "mäntel",
      "capes",
      "gugeln",
-     "wollmantel"
+     "wollmantel",
+     "überwurf",
+     "mönchsrobe",
+     "kutte",
+     "mönchskutte",
+     "poncho",
+     "pelerine",
+     "fellkragen",
+     "fellstola",
+     "stola",
+     "halstuch",
+     "fellumhang"
     ],
     "nl": [
      "mantel",
@@ -1963,7 +1986,12 @@
      "langgürtel",
      "wehrgehänge",
      "schärpe",
-     "gürteltasche set"
+     "gürteltasche set",
+     "gürtelbeschlag",
+     "gürtelbeschläge",
+     "riemenzunge",
+     "gürtelschnalle",
+     "gewandhaken"
     ],
     "nl": [
      "riem",
@@ -2197,7 +2225,10 @@
      "ketten",
      "halskette",
      "armband",
-     "ohrring"
+     "ohrring",
+     "bauernkasse",
+     "halbedelstein",
+     "gewandnadel"
     ],
     "nl": [
      "sieraden",
@@ -2351,7 +2382,25 @@
      "trinkhörner",
      "laternen",
      "kerzenhalter",
-     "geschirr set"
+     "geschirr set",
+     "holzteller",
+     "gabel",
+     "besteck",
+     "messerset",
+     "bratengabel",
+     "serviergabel",
+     "steakgabel",
+     "hippe",
+     "holzbecher",
+     "tonkrug",
+     "tonbecher",
+     "kochtopf",
+     "dreibein",
+     "pfanne",
+     "lagerküche",
+     "feuerschale",
+     "trinkschale",
+     "schöpfkelle"
     ],
     "nl": [
      "servies",
@@ -2432,7 +2481,12 @@
      "латексная накладка",
      "кровь бутафорская",
      "искусственная кровь",
-     "протез"
+     "протез",
+     "парик",
+     "парики",
+     "линзы",
+     "накладные уши",
+     "аквагрим"
     ],
     "en": [
      "make-up",
@@ -2458,7 +2512,14 @@
      "collodion",
      "collodium",
      "latex milk",
-     "liquid latex"
+     "liquid latex",
+     "wig",
+     "wigs",
+     "beard",
+     "contact lenses",
+     "lenses",
+     "fake teeth",
+     "face paint"
     ],
     "de": [
      "schminke",
@@ -2472,7 +2533,30 @@
      "kunstblut",
      "theaterblut",
      "wunde",
-     "narbe"
+     "narbe",
+     "perücke",
+     "perücken",
+     "bart",
+     "bärte",
+     "kontaktlinsen",
+     "kontaktlinse",
+     "motivlinsen",
+     "falsche zähne",
+     "zähne",
+     "fake tattoo",
+     "tattoos",
+     "haarspray",
+     "hairspray",
+     "bodyspray",
+     "schminkzubehör",
+     "schminkpinsel",
+     "schwamm",
+     "latex-applikation",
+     "latexapplikation",
+     "applikation",
+     "ohren",
+     "narben",
+     "schminkschwamm"
     ],
     "nl": [
      "schmink",
@@ -2628,7 +2712,13 @@
      "skull",
      "stone",
      "pistol",
-     "wand"
+     "wand",
+     "blaster",
+     "gas mask",
+     "coin",
+     "coins",
+     "gem",
+     "crystal"
     ],
     "de": [
      "requisite",
@@ -2640,7 +2730,25 @@
      "zauberbuch",
      "totenkopf",
      "pistole",
-     "zauberstab"
+     "zauberstab",
+     "dartblaster",
+     "blaster",
+     "nerf",
+     "endzeit",
+     "gasmaske",
+     "3d-druck",
+     "3d druck",
+     "schriftrollen",
+     "larpmünze",
+     "münze",
+     "münzen",
+     "kugelflasche",
+     "flasche",
+     "phiolen",
+     "crystal gem",
+     "flamme der elemente",
+     "kristall",
+     "tragesystem"
     ],
     "nl": [
      "rekwisiet",
@@ -2843,7 +2951,9 @@
      "board game",
      "souvenir",
      "poster",
-     "print"
+     "print",
+     "gift card",
+     "gift voucher"
     ],
     "de": [
      "buch",
@@ -2853,7 +2963,29 @@
      "brettspiel",
      "poster",
      "souvenir",
-     "sammelfigur"
+     "sammelfigur",
+     "gothic",
+     "gutschein",
+     "geschenkgutschein",
+     "miniatur",
+     "miniaturen",
+     "miniatures",
+     "tabletop",
+     "wargames",
+     "met",
+     "honigwein",
+     "honiglikör",
+     "likör",
+     "literatur",
+     "roman",
+     "zeitschrift",
+     "dvd",
+     "cd",
+     "ballistol",
+     "universalöl",
+     "pflegeöl",
+     "lederfett",
+     "lederpflege"
     ],
     "nl": [
      "boek",
@@ -3038,7 +3170,11 @@
      "lederhaut",
      "schaumstoffplatte",
      "kleber",
-     "zubehör bastel"
+     "zubehör bastel",
+     "rüstungszubehör",
+     "ersatzteil",
+     "ersatzteile",
+     "riemenset"
     ],
     "nl": [
      "klinknagel",

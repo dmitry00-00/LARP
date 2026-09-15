@@ -105,6 +105,9 @@ def classify_pending(db: Session, limit: int = 5000) -> dict:
                       provenance=it.provenance); db.add(lot); created += 1
         else:
             updated += 1
+        # доска аренды (allrpg «Склад»): позиция только с ценой аренды — услуга `rent`
+        if meta.get("service_kind"):
+            d = "service"
         lot.direction = d; lot.title = (it.title or text[:120])[:500]
         lot.price = price; lot.currency = cur; lot.price_rub = rub; lot.price_usd = usd
         # Структурное состояние от площадки (marktplaats: «Nieuw / Zo goed als nieuw /
@@ -113,7 +116,8 @@ def classify_pending(db: Session, limit: int = 5000) -> dict:
         lot.city = it.city; lot.country = it.country; lot.lang = it.lang
         lot.source_url = it.url; lot.inbox_item_id = it.id; lot.posted_at = it.posted_at
         lot.slot_id = slot_id; lot.slot_confidence = conf; lot.photos_count = it.photos_count
-        lot.specs = {k: v for k, v in {"negotiable": meta.get("negotiable"), "shipping": meta.get("shipping")}.items() if v is not None}
+        lot.specs = {k: v for k, v in {"negotiable": meta.get("negotiable"), "shipping": meta.get("shipping"),
+                                       "service_kind": meta.get("service_kind"), "price_rent": meta.get("price_rent")}.items() if v is not None}
         lot.status = "active"
         it.status = "extracted"; it.classified_as = d
         it.extraction_meta = {**meta, "slot_id": slot_id, "slot_confidence": conf, "needs_review": slot_id is None,
