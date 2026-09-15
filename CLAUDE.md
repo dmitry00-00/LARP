@@ -103,8 +103,8 @@ Telegram / VK / форумов и разобранный LLM в структур
 | `tweaks-panel.jsx` | панель настройки акцента и шрифтов | есть |
 | `styles.css` | токены: тёмная тёплая палитра oklch, металлические акценты | есть |
 | `kernel/` | ядро приёма из recruit: `telemetry`, `tg_web`, `telegram`, `llm`, `dedup`, `salary`, `ner_extractor`, `fx`, `mutation_audit`, стражи схемы | **есть с 15.09.2026, 196 тестов проходят**; в цикл обхода не собрано |
-| **`apps/ingest/`** | приложение приёма поверх `kernel/`: 9 таблиц (SQLAlchemy 2.0, **SQLite `data/hmb.sqlite`**, Postgres — сменой `HMB_DATABASE_URL`), словарь 49 слотов × 1 762 алиасов RU/EN/DE/NL (RU — основами, + проход по немецким композитам, «с ножнами» вырезается), импортёры `epicarmoury` · `calimacil` · `dein_larp_shop` · `donjon` · `wargearshop` · `mechiizpechi` · `sekira` · `bsmith` (RU) · `kogda_igra` · `rulesets` · `kleinanzeigen` · `marktplaats` · `tg_web` · `olx`, классификатор без LLM с гейтом для лент сообществ, экспорт `site/data/feed.json` | **есть с 15.09.2026**; `python -m hmb status` — числа |
-| `data/hmb.sqlite` | 13 544 карточки шести витрин (Epic Armoury 1 872 · Calimacil 3 925 · Dein LARP Shop 3 217 · **RU: Донжон 1 757 · WarGear Shop 2 756 · «Мечи из Печи» 13**; со слотом 89 / 97 / 92 / 99.9 / 99.3 / 100 %), **431 объявление** (228 DE kleinanzeigen · 190 NL marktplaats · 13 RU «Барахолка» Донжона), 988 игр (880 VK / 34 TG), 435 постов TG-каналов игр → 0 лотов, 5 регламентов / 39 пределов; словарь v9 — 49 слотов, 1 880 алиасов (замер 15.09 18:20) | есть |
+| **`apps/ingest/`** | приложение приёма поверх `kernel/`: 9 таблиц (SQLAlchemy 2.0, **SQLite `data/hmb.sqlite`**, Postgres — сменой `HMB_DATABASE_URL`), словарь 49 слотов × 1 762 алиасов RU/EN/DE/NL (RU — основами, + проход по немецким композитам, «с ножнами» вырезается), импортёры `epicarmoury` · `calimacil` · `dein_larp_shop` · `donjon` · `wargearshop` · `mechiizpechi` · `sekira` · `bsmith` · `allrpg` (RU) · `mytholon` · `andracor` (DE) · `kogda_igra` · `rulesets` · `kleinanzeigen` · `marktplaats` · `tg_web` · `olx`, классификатор без LLM с гейтом для лент сообществ, экспорт `site/data/feed.json` | **есть с 15.09.2026**; `python -m hmb status` — числа |
+| `data/hmb.sqlite` | **22 138 лотов, 95.6 % со слотом** (замер 15.09 20:00): 11 витрин — RU: Донжон 1 770 · WarGear 2 757 · Кузница 2 462 · Секира 1 781 · «Мечи из Печи» 13; EN/DE: Epic Armoury 1 872 · Calimacil 3 929 · Dein LARP Shop 3 217 · Mytholon 2 013 · Andracor 1 893; **444 объявления** (228 DE kleinanzeigen · 190 NL marktplaats · 13 RU Барахолка Донжона · 13 RU allrpg «Склад»), 8 услуг; 988 игр (880 VK / 34 TG), 435 постов TG-каналов игр → 0 лотов, 5 регламентов / 39 пределов; словарь v9 — 49 слотов, 2 104 алиаса | есть |
 | бэкенд FastAPI, боты, Alembic | — | **нет** (`create_all` вместо миграций — долг) |
 
 Ни одной реальной записи в проекте нет: все 28 лотов, цены и мастерские в
@@ -260,6 +260,9 @@ cd apps/ingest && .venv/bin/python -m hmb status        # три числа + к
 .venv/bin/python -m hmb import mechiizpechi             # «Мечи из Печи» (orgs.biz): 13 позиций фабричного ПУ, спецификации со страниц товаров
 .venv/bin/python -m hmb import sekira                   # «Секира» (InSales JSON): 86 коллекций, ~90 запросов, ~3 мин
 .venv/bin/python -m hmb import bsmith                   # «Кузница» (Drupal, Crawl-delay 10): 163 раздела, ~30 мин
+.venv/bin/python -m hmb import mytholon                 # Shopware 6, robots запрещает ?query → только первые страницы 196 категорий, ~7 мин
+.venv/bin/python -m hmb import andracor                 # OXID, 89 категорий с пагинацией, ~4 мин
+.venv/bin/python -m hmb import allrpg && hmb classify   # allrpg.info «Склад»: 13 позиций RU, аренда/продажа
 .venv/bin/python -m hmb reslot [--source X]             # после посева словаря: пересчёт слотов по сохранённым полям + число
 .venv/bin/python -m hmb import tg_web                   # t.me/s/ по каналам игр из games, вне квоты; 435 постов → 0 лотов (анонсы)
 .venv/bin/python -m hmb import kleinanzeigen            # объявления DE; 4–7 запросов на прогон до 403, блок снимается за ~15 мин — раз в 15 мин; курсор запросов в sources.meta
