@@ -19,3 +19,7 @@ analysis/mutations/
 
 # журнал массовых правок ядра — данные, не код
 kernel/analysis/mutations/
+
+# курсор приёма из шлюза tg-gateway и копии базы перед боевыми прогонами — данные
+data/tg_gateway.json
+data/hmb.sqlite.bak-*

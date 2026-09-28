@@ -1,8 +1,8 @@
 """Pydantic-Settings — env-driven config for the ingest kernel.
 
 Урезанная копия `openclaw/config.py` из recruit (15.09.2026): оставлены ТОЛЬКО
-ключи, которые читают перенесённые модули (`sidefiles`, `accounts`,
-`clients/telegram`, `clients/llm`). Всё про recruit-бэкенд, GitHub-корпус и
+ключи, которые читают перенесённые модули (`clients/llm`; клиент Telegram
+убран 28.09.2026 — Telegram читает шлюз основы). Всё про recruit-бэкенд, GitHub-корпус и
 расписания скиллов осталось там.
 
 Дефолты LLM — локальный LM Studio, не облако. Причина из recruit (замер
@@ -45,14 +45,10 @@ class Settings(BaseSettings):
     llm_max_tokens: int = Field(default=8000)
     llm_max_tokens_local: int = Field(default=2048)
 
-    # ── Telegram MTProto ──────────────────────────────────────────
-    tg_api_id: int | None = Field(default=None)
-    tg_api_hash: str = Field(default="")
-    tg_session_path: Path = Field(default=Path("/var/lib/hmb-ingest/tg.session"))
-    openclaw_mock_telegram: bool = Field(default=False)
+    # Telegram MTProto здесь больше нет (28.09.2026): Telegram читает общий шлюз основы
+    # (~/core/services/tg-gateway), приём берёт посты у него — apps/ingest/hmb/importers/tg_gateway.py.
 
     # ── Cadence ───────────────────────────────────────────────────
-    watch_interval_sec: int = Field(default=300)
     max_batch_size: int = Field(default=50)
 
 
