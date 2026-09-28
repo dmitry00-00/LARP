@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+import sqlite3
 from contextlib import contextmanager
 from collections.abc import Iterator
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 
-from hmb import config
+from hmb import config, sqlite_text
 from hmb.models import Base
 
 _engine = None
@@ -26,6 +27,10 @@ def engine():
             def _fk(dbapi_conn, _rec):  # noqa: ANN001
                 dbapi_conn.execute("PRAGMA foreign_keys=ON")
                 dbapi_conn.execute("PRAGMA journal_mode=WAL")
+            # lower()/upper()/LIKE в SQLite складывают регистр только для ASCII:
+            # 'Робот' проходит мимо '%робот%'. Замер 16.09 — 2 лота из 3.
+            # Разбор и цена — hmb/sqlite_text.py.
+            sqlite_text.attach(_engine)
         # Журнал массовых правок — крючок на движке, как в recruit.
         try:
             from kernel.db.mutation_audit import install_listener as install
@@ -60,6 +65,29 @@ def init_db() -> None:
     """Пока без Alembic: create_all + реестр добавленных колонок. Долг записан в config.py."""
     Base.metadata.create_all(engine())
     _ensure_columns(engine())
+
+
+def sqlite_connect(readonly: bool = True) -> sqlite3.Connection:
+    """Сырое подключение к SQLite для разовых замеров — с тем же Unicode-регистром.
+
+    Существует потому, что дыру 16.09 открыл не код проекта, а разовый
+    `sqlite3.connect(...)` в стороне от движка: там крючок `engine()` не
+    работает, и `lower()` снова ASCII-только. Любой замер по базе идти должен
+    отсюда либо через `python -m hmb sql`, а не через голый `sqlite3.connect`.
+
+    `readonly=True` открывает файл в режиме `mode=ro`: замер не имеет права
+    записать в прод-базу, даже опечаткой.
+    """
+    if not config.DATABASE_URL.startswith("sqlite"):
+        raise RuntimeError(f"sqlite_connect вызван при не-SQLite базе: {config.DATABASE_URL}")
+    path = config.DATABASE_URL.replace("sqlite:///", "", 1)
+    conn = (
+        sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        if readonly
+        else sqlite3.connect(path, timeout=60)
+    )
+    sqlite_text.install(conn)
+    return conn
 
 
 @contextmanager

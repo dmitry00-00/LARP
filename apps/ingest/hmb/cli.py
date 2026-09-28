@@ -84,6 +84,40 @@ def cmd_status(_a):
     print(json.dumps(out, ensure_ascii=False, indent=1))
 
 
+def cmd_sql(a):
+    """Разовый замер по базе — read-only и с Unicode-регистром.
+
+    Смысл команды не в удобстве, а в том, чтобы правильный путь был самым
+    коротким: голый `sqlite3 data/hmb.sqlite` и `sqlite3.connect(...)` в
+    сторонних скриптах обходят крючок движка, и `lower()` там снова
+    ASCII-только (разбор — `hmb/sqlite_text.py`).
+
+    Печатает число строк отдельной строкой, а применённый лимит — своей:
+    AGENT_RULES §4, круглое число в отчёте почти всегда собственная
+    настройка, и увидеть это надо в выводе, а не вспомнить.
+    """
+    conn = dbm.sqlite_connect(readonly=True)
+    try:
+        cur = conn.execute(a.query)
+        cols = [d[0] for d in cur.description] if cur.description else []
+        rows = cur.fetchmany(a.limit + 1) if a.limit else cur.fetchall()
+    finally:
+        conn.close()
+    capped = bool(a.limit) and len(rows) > a.limit
+    if capped:
+        rows = rows[: a.limit]
+    if a.json:
+        print(json.dumps([dict(zip(cols, r)) for r in rows], ensure_ascii=False, indent=1, default=str))
+    else:
+        if cols:
+            print("\t".join(cols))
+        for r in rows:
+            print("\t".join("" if v is None else str(v) for v in r))
+    print(f"— строк: {len(rows)}", file=sys.stderr)
+    if capped:
+        print(f"— СРЕЗАНО лимитом --limit {a.limit}: в ответе есть ещё строки", file=sys.stderr)
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(prog="hmb")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -95,6 +129,9 @@ def main(argv=None):
     pm = sub.add_parser("match"); pm.add_argument("--slot"); pm.add_argument("--max-price", type=int); pm.add_argument("--country")
     pm.add_argument("--cond"); pm.add_argument("--q"); pm.add_argument("--top", type=int, default=20); pm.set_defaults(fn=cmd_match)
     sub.add_parser("status").set_defaults(fn=cmd_status)
+    ps = sub.add_parser("sql", help="разовый SELECT по базе: read-only, регистр по Unicode")
+    ps.add_argument("query"); ps.add_argument("--limit", type=int, default=0, help="0 — без лимита")
+    ps.add_argument("--json", action="store_true"); ps.set_defaults(fn=cmd_sql)
     a = p.parse_args(argv)
     return a.fn(a)
 
